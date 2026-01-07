@@ -1,0 +1,13 @@
+ignorada/
+*.zip
+
+# ------------------------------
+# Logs / temp
+# ------------------------------
+*.log
+logs/
+tmp/
+temp/
+.cache/
+
+env_admindf
