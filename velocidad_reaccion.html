@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Test de Reacción</title>
+  <style>
+    :root {
+      --bg: #0f172a;        /* fondo inicial */
+      --panel: rgba(255,255,255,.08);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --btn: #ffffff;
+      --btnText: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      transition: background-color 120ms linear;
+      user-select: none;
+    }
+
+    .wrap {
+      width: min(560px, 92vw);
+      text-align: center;
+      padding: 28px 22px;
+      border-radius: 16px;
+      background: var(--panel);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 14px;
+    }
+
+    .time {
+      font-variant-numeric: tabular-nums;
+      font-size: 38px;
+      font-weight: 800;
+      margin: 10px 0 18px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 18px 22px;
+      width: min(360px, 100%);
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      background: var(--btn);
+      color: var(--btnText);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      transition: transform 120ms ease, opacity 120ms ease;
+    }
+
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: .65; cursor: not-allowed; }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .good { color: #a7f3d0; }
+    .bad  { color: #fecaca; }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <h1>Test de tiempo de reacción</h1>
+    <p id="msg">Haz clic en “Iniciar”. Luego espera a que el fondo cambie. Apenas cambie, haz clic en el botón.</p>
+
+    <div class="time" id="time">0.000 s</div>
+
+    <button id="btn">Iniciar</button>
+
+    <div class="hint" id="hint">Tip: no hagas clic antes del cambio de color.</div>
+  </main>
+
+  <script>
+    // -----------------------------
+    // Utilidades
+    // -----------------------------
+    function randInt(min, max) { // inclusive
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function formatMs(ms) {
+      const s = (ms / 1000).toFixed(3);
+      return `${s} s`;
+    }
+
+    // -----------------------------
+    // Estado
+    // -----------------------------
+    const btn  = document.getElementById("btn");
+    const msg  = document.getElementById("msg");
+    const time = document.getElementById("time");
+    const hint = document.getElementById("hint");
+
+    // Colores
+    const BG_WAIT  = "#0f172a"; // esperando
+    const BG_GOOD  = "#16a34a"; // verde (go)
+    const BG_FALSE = "#b91c1c"; // rojo (click temprano)
+
+    let phase = "idle"; // idle | waiting | running | done
+    let startAt = 0;    // performance.now() cuando se dispara el "GO"
+    let rafId = null;
+    let timeoutId = null;
+
+    function setBg(color) {
+      document.body.style.backgroundColor = color;
+    }
+
+    function stopRaf() {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }
+
+    function tick() {
+      if (phase !== "running") return;
+      const now = performance.now();
+      time.textContent = formatMs(now - startAt);
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function resetToIdle() {
+      phase = "idle";
+      stopRaf();
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      setBg(BG_WAIT);
+      time.textContent = "0.000 s";
+      msg.textContent = "Haz clic en “Iniciar”. Luego espera a que el fondo cambie. Apenas cambie, haz clic en el botón.";
+      hint.textContent = "Tip: no hagas clic antes del cambio de color.";
+      hint.className = "hint";
+      btn.textContent = "Iniciar";
+      btn.disabled = false;
+    }
+
+    function startWaiting() {
+      phase = "waiting";
+      stopRaf();
+      setBg(BG_WAIT);
+      time.textContent = "0.000 s";
+      msg.textContent = "Espera... el fondo cambiará en un tiempo aleatorio (3 a 7 segundos).";
+      hint.textContent = "No hagas clic todavía.";
+      hint.className = "hint";
+
+      btn.textContent = "Haz clic cuando cambie";
+      btn.disabled = false;
+
+      const delayMs = randInt(3000, 7000);
+
+      timeoutId = setTimeout(() => {
+        timeoutId = null;
+        phase = "running";
+        setBg(BG_GOOD);
+        msg.textContent = "¡Ahora! Haz clic para detener el cronómetro.";
+        hint.textContent = "Cronómetro corriendo...";
+        hint.className = "hint good";
+
+        startAt = performance.now();
+        tick();
+      }, delayMs);
+    }
+
+    function stopTimer() {
+      stopRaf();
+      const elapsed = performance.now() - startAt;
+      phase = "done";
+      time.textContent = formatMs(elapsed);
+      msg.textContent = `Tu tiempo de reacción fue: ${formatMs(elapsed)}.`;
+      hint.textContent = "Haz clic en “Reintentar” para repetir.";
+      hint.className = "hint";
+      btn.textContent = "Reintentar";
+    }
+
+    function earlyClick() {
+      // Click antes del "GO"
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      stopRaf();
+      phase = "done";
+      setBg(BG_FALSE);
+      msg.textContent = "Clic demasiado temprano. Debes esperar a que el fondo cambie.";
+      hint.textContent = "Haz clic en “Reintentar”.";
+      hint.className = "hint bad";
+      btn.textContent = "Reintentar";
+      time.textContent = "0.000 s";
+    }
+
+    // -----------------------------
+    // Eventos
+    // -----------------------------
+    btn.addEventListener("click", () => {
+      if (phase === "idle") {
+        startWaiting();
+        return;
+      }
+
+      if (phase === "waiting") {
+        earlyClick();
+        return;
+      }
+
+      if (phase === "running") {
+        stopTimer();
+        return;
+      }
+
+      if (phase === "done") {
+        // Reintentar => vuelve a esperar de inmediato
+        startWaiting();
+        return;
+      }
+    });
+
+    // Estado inicial
+    resetToIdle();
+  </script>
+</body>
+</html>
