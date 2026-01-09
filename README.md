@@ -7,7 +7,6 @@ Este repositorio reúne **archivos de práctica y material de clases** usados en
 El contenido está organizado como un conjunto de **demos autocontenidas** (principalmente HTML/CSS/JS/Bootstrap/jQuery) que se pueden abrir en el navegador para explicar conceptos y realizar ejercicios guiados.
 
 ---
-
 ## Qué incluye el proyecto (visión general)
 
 - **Fundamentos HTML**: estructura, secciones, páginas y plantillas simples.
@@ -68,3 +67,5 @@ Levanta un servidor local para evitar problemas de rutas relativas y trabajar co
 ```bash
 cd ruta/al/repositorio
 python3 -m http.server 8000
+
+
