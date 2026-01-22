@@ -33,5 +33,19 @@ lista_diccionario = [
 
 diccionario_de_diccionarios = {
     1: {"nombre": "Juan perez", "correo": "soyjuan@gmail.com"},
-    2: {"nombre": "Juan Rojas", "correo": "juan@rojas.com"}
+    2: {"nombre": "Juan Rojas", "correo": "juan@rojas.com"},
+    999: {"nombre": "999 R", "correo": "juan@rojas.com"}
 }
+
+print(diccionario_de_diccionarios[999]["nombre"])
+print(diccionario_de_diccionarios[999].values())
+print(diccionario_de_diccionarios[999])
+
+
+for id, d in diccionario_de_diccionarios.items():
+    print(f"{id} | {d['nombre']} | {d['correo']}")
+
+
+valores_1 = list(diccionario_de_diccionarios[999].values())
+print(valores_1)
+# ['Juan perez', 'soyjuan@gmail.com']
