@@ -37,6 +37,91 @@ ALTER TABLE nombre_tabla
 
 ---
 
+## ⚙️ Preparación: tablas para practicar
+
+> **Copia y ejecuta este bloque ANTES de probar los ejemplos del documento.**
+> Así tendrás las tablas listas para ir probando cada sección.
+
+```sql
+-- =============================================
+-- EJECUTAR ESTO PRIMERO para poder practicar
+-- (puedes ejecutar este bloque las veces que quieras,
+--  el DROP borra las tablas si ya existen)
+-- =============================================
+
+-- Borrar tablas si ya existen (orden: hijas primero, padres después)
+DROP TABLE IF EXISTS venta_detalle CASCADE;
+DROP TABLE IF EXISTS ventas CASCADE;
+DROP TABLE IF EXISTS productos CASCADE;
+DROP TABLE IF EXISTS categorias CASCADE;
+DROP TABLE IF EXISTS clientes CASCADE;
+
+-- Tabla de categorías
+CREATE TABLE categorias (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL
+);
+
+-- Tabla de productos (con FK hacia categorías)
+CREATE TABLE productos (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  precio NUMERIC(10,2),
+  id_categoria INT,
+  FOREIGN KEY (id_categoria) REFERENCES categorias(id)
+);
+
+-- Tabla de clientes
+CREATE TABLE clientes (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50),
+  telefono VARCHAR(20),
+  dir VARCHAR(100),
+  email VARCHAR(100)
+);
+
+-- Tabla de ventas (para practicar PK compuesta y FK)
+CREATE TABLE ventas (
+  id INT PRIMARY KEY,
+  fecha DATE
+);
+
+CREATE TABLE venta_detalle (
+  id_venta INT,
+  id_producto INT,
+  cantidad INT,
+  PRIMARY KEY (id_venta, id_producto),
+  FOREIGN KEY (id_venta) REFERENCES ventas(id),
+  FOREIGN KEY (id_producto) REFERENCES productos(id)
+);
+
+-- Insertar datos de ejemplo para tener filas con las que trabajar
+INSERT INTO categorias (id, nombre) VALUES
+  (1, 'Bebidas'),
+  (2, 'Snacks'),
+  (3, 'Lácteos');
+
+INSERT INTO productos (id, nombre, precio, id_categoria) VALUES
+  (1, 'Agua 1L',      990,  1),
+  (2, 'Coca Cola 2L', 1990, 1),
+  (3, 'Papas Fritas', 1500, 2),
+  (4, 'Yogurt',       890,  3);
+
+INSERT INTO clientes (id, nombre, telefono, dir, email) VALUES
+  (1, 'Ana López',  '+56912345678', 'Av. Siempre Viva 123', 'ana@mail.com'),
+  (2, 'Pedro Soto', '+56987654321', 'Calle Falsa 456',      'pedro@mail.com');
+```
+
+> ⚠️ Si quieres empezar de cero (borrar todo y volver a crear), ejecuta:
+>
+> ```sql
+> DROP TABLE IF EXISTS venta_detalle, ventas, productos, categorias, clientes CASCADE;
+> ```
+>
+> Y luego vuelve a ejecutar el bloque de arriba.
+
+---
+
 ## 1) Renombrar una tabla
 
 Cambiar el nombre completo de la tabla:
@@ -339,7 +424,41 @@ DROP CONSTRAINT chk_precio_positivo;
 
 ## 10) Agregar y quitar FK (clave foránea)
 
-### 10.1 Agregar FK (la columna ya existe)
+### 10.1 ¿Qué es una FK y por qué agregarla después?
+
+Una **FK (Foreign Key / Clave Foránea)** es una restricción que dice:
+
+> "El valor de esta columna **debe existir** en otra tabla."
+
+**¿Por qué agregarla después de crear la tabla?** Porque en la vida real pasa mucho:
+
+- Creaste las tablas sin relaciones y ahora quieres conectarlas.
+- El profesor pidió "ahora agreguen la relación entre tablas".
+- Olvidaste la FK al crear la tabla.
+- Necesitas conectar una tabla nueva con una que ya existía.
+
+### 10.2 Escenario completo (ejemplo real)
+
+Supongamos que ya tienes estas tablas **sin relación**:
+
+```sql
+-- Ya existe
+CREATE TABLE categorias (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50)
+);
+
+-- Ya existe, pero SIN FK
+CREATE TABLE productos (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50),
+  id_categoria INT        -- esta columna existe pero no tiene FK
+);
+```
+
+Ahora quieres que `productos.id_categoria` **apunte** a `categorias.id`.
+
+### 10.3 Agregar FK cuando la columna YA existe
 
 ```sql
 ALTER TABLE productos
@@ -347,37 +466,165 @@ ADD CONSTRAINT fk_productos_categoria
 FOREIGN KEY (id_categoria) REFERENCES categorias(id);
 ```
 
-- `fk_productos_categoria` es el nombre que eliges para la FK.
+**Explicación letra por letra:**
 
-> ⚠️ Si hay valores en `id_categoria` que no existen en `categorias.id` → **error**. Primero verifica:
+| Fragmento                    | Significado                                                                                                    |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `ALTER TABLE productos`      | "Quiero modificar la tabla `productos`"                                                                        |
+| `ADD CONSTRAINT`             | "Voy a agregar una restricción (regla)"                                                                        |
+| `fk_productos_categoria`     | El **nombre** que tú eliges para esta FK (puedes poner el que quieras, pero se recomienda `fk_tabla_relacion`) |
+| `FOREIGN KEY (id_categoria)` | "La columna que será FK es `id_categoria`"                                                                     |
+| `REFERENCES categorias(id)`  | "Debe apuntar a la columna `id` de la tabla `categorias`"                                                      |
+
+> **Traducción humana:** "Cada valor de `productos.id_categoria` debe existir en `categorias.id`. Si alguien intenta poner una categoría que no existe → error."
+
+### 10.4 Agregar FK cuando la columna NO existe todavía
+
+Si la tabla `productos` no tiene la columna `id_categoria`, primero debes crearla:
 
 ```sql
-SELECT id_categoria
+-- Paso 1: crear la columna
+ALTER TABLE productos
+ADD COLUMN id_categoria INT;
+
+-- Paso 2: crear la FK
+ALTER TABLE productos
+ADD CONSTRAINT fk_productos_categoria
+FOREIGN KEY (id_categoria) REFERENCES categorias(id);
+```
+
+> Son **dos sentencias separadas**: primero la columna, después la restricción.
+
+### 10.5 Agregar FK obligatoria (NOT NULL)
+
+Si quieres que **todo producto DEBA tener categoría** (no puede ser NULL):
+
+```sql
+-- Paso 1: crear la columna como obligatoria (con DEFAULT si ya hay datos)
+ALTER TABLE productos
+ADD COLUMN id_categoria INT NOT NULL DEFAULT 1;
+
+-- Paso 2: crear la FK
+ALTER TABLE productos
+ADD CONSTRAINT fk_productos_categoria
+FOREIGN KEY (id_categoria) REFERENCES categorias(id);
+```
+
+> ⚠️ El `DEFAULT 1` asume que la categoría con `id = 1` ya existe. Sin DEFAULT, dará error si la tabla ya tiene filas.
+
+### 10.6 FK con acción al borrar (ON DELETE)
+
+¿Qué pasa si borras una categoría que tiene productos? Puedes definir el comportamiento:
+
+```sql
+ALTER TABLE productos
+ADD CONSTRAINT fk_productos_categoria
+FOREIGN KEY (id_categoria) REFERENCES categorias(id)
+ON DELETE CASCADE;
+```
+
+**Opciones de ON DELETE:**
+
+| Opción                   | Qué hace al borrar la categoría                    | ¿Cuándo usarlo?                                  |
+| ------------------------ | -------------------------------------------------- | ------------------------------------------------ |
+| `CASCADE`                | Borra también los productos de esa categoría       | Cuando los hijos no tienen sentido sin el padre  |
+| `SET NULL`               | Pone `NULL` en `id_categoria` de los productos     | Cuando los productos pueden quedar sin categoría |
+| `RESTRICT` (por defecto) | **No deja** borrar la categoría si tiene productos | Cuando quieres proteger los datos                |
+
+```sql
+-- Ejemplo con SET NULL
+ALTER TABLE productos
+ADD CONSTRAINT fk_productos_categoria
+FOREIGN KEY (id_categoria) REFERENCES categorias(id)
+ON DELETE SET NULL;
+```
+
+### 10.7 ⚠️ Verificar datos ANTES de agregar la FK
+
+Si la tabla ya tiene datos, puede haber valores "huérfanos" (que apuntan a categorías que no existen). La FK **no se puede crear** si hay datos inválidos.
+
+**Paso 1: buscar datos huérfanos**
+
+```sql
+SELECT id, nombre, id_categoria
 FROM productos
 WHERE id_categoria IS NOT NULL
   AND id_categoria NOT IN (SELECT id FROM categorias);
 ```
 
-### 10.2 Agregar FK (la columna NO existe todavía)
+Si esta consulta devuelve filas → esos datos son el problema.
 
-Primero crear la columna, después la FK:
+**Paso 2: corregir los huérfanos**
+
+Opción A — Ponerlos en NULL:
 
 ```sql
--- Paso 1: crear la columna
-ALTER TABLE productos
-ADD COLUMN id_proveedor INT;
-
--- Paso 2: crear la FK
-ALTER TABLE productos
-ADD CONSTRAINT fk_productos_proveedor
-FOREIGN KEY (id_proveedor) REFERENCES proveedores(id);
+UPDATE productos
+SET id_categoria = NULL
+WHERE id_categoria NOT IN (SELECT id FROM categorias);
 ```
 
-### 10.3 Quitar una FK
+Opción B — Asignarles una categoría válida:
+
+```sql
+UPDATE productos
+SET id_categoria = 1
+WHERE id_categoria NOT IN (SELECT id FROM categorias);
+```
+
+**Paso 3: ahora sí crear la FK**
+
+```sql
+ALTER TABLE productos
+ADD CONSTRAINT fk_productos_categoria
+FOREIGN KEY (id_categoria) REFERENCES categorias(id);
+```
+
+### 10.8 Quitar una FK
 
 ```sql
 ALTER TABLE productos
 DROP CONSTRAINT fk_productos_categoria;
+```
+
+> Para saber el nombre de la FK: usa `\d productos` en psql, o en DBeaver → tabla → pestaña "Constraints" / "Foreign Keys".
+
+### 10.9 Ejemplo completo paso a paso
+
+```sql
+-- 1. Tenemos estas tablas sin relación
+CREATE TABLE proveedores (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50)
+);
+
+CREATE TABLE productos (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50),
+  precio NUMERIC(10,2)
+);
+
+-- 2. Insertamos datos
+INSERT INTO proveedores VALUES (1, 'Coca Cola Chile'), (2, 'Nestlé');
+INSERT INTO productos VALUES (1, 'Coca Cola 2L', 1990), (2, 'Yogurt', 890);
+
+-- 3. Ahora queremos conectar productos con proveedores
+-- Paso A: agregar la columna
+ALTER TABLE productos
+ADD COLUMN id_proveedor INT;
+
+-- Paso B: llenar los datos existentes
+UPDATE productos SET id_proveedor = 1 WHERE nombre = 'Coca Cola 2L';
+UPDATE productos SET id_proveedor = 2 WHERE nombre = 'Yogurt';
+
+-- Paso C: crear la FK
+ALTER TABLE productos
+ADD CONSTRAINT fk_productos_proveedor
+FOREIGN KEY (id_proveedor) REFERENCES proveedores(id);
+
+-- 4. Verificar la estructura
+-- En psql: \d productos
+-- Debe mostrar la FK al final
 ```
 
 ---

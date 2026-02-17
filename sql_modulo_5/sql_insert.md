@@ -33,6 +33,74 @@ Este documento cubre todo lo necesario para **insertar datos** en tablas existen
 
 ---
 
+## ⚙️ Preparación: tablas para practicar
+
+> **Copia y ejecuta este bloque ANTES de probar los ejemplos del documento.**
+> Así tendrás las tablas listas para ir probando cada sección.
+
+```sql
+-- =============================================
+-- EJECUTAR ESTO PRIMERO para poder practicar
+-- (puedes ejecutar este bloque las veces que quieras,
+--  el DROP borra las tablas si ya existen)
+-- =============================================
+
+-- Borrar tablas si ya existen (orden: hijas primero, padres después)
+DROP TABLE IF EXISTS productos_baratos CASCADE;
+DROP TABLE IF EXISTS productos_respaldo CASCADE;
+DROP TABLE IF EXISTS productos CASCADE;
+DROP TABLE IF EXISTS categorias CASCADE;
+DROP TABLE IF EXISTS clientes CASCADE;
+
+-- Tabla padre: categorías
+CREATE TABLE categorias (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL
+);
+
+-- Tabla hija: productos (con FK hacia categorías)
+CREATE TABLE productos (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  precio NUMERIC(10,2),
+  stock INT DEFAULT 0,
+  activo BOOLEAN DEFAULT true,
+  id_categoria INT,
+  FOREIGN KEY (id_categoria) REFERENCES categorias(id)
+);
+
+-- Tabla con ID autogenerado
+CREATE TABLE clientes (
+  id BIGSERIAL PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  email VARCHAR(100) UNIQUE,
+  rut VARCHAR(12)
+);
+
+-- Tabla para practicar INSERT...SELECT (sección 6)
+CREATE TABLE productos_respaldo (
+  id INT,
+  nombre VARCHAR(50),
+  precio NUMERIC(10,2)
+);
+
+CREATE TABLE productos_baratos (
+  id INT,
+  nombre VARCHAR(50),
+  precio NUMERIC(10,2)
+);
+```
+
+> ⚠️ Si quieres empezar de cero (borrar todo y volver a crear), ejecuta:
+>
+> ```sql
+> DROP TABLE IF EXISTS productos_baratos, productos_respaldo, productos, categorias, clientes CASCADE;
+> ```
+>
+> Y luego vuelve a ejecutar el bloque de arriba.
+
+---
+
 ## 1) Sintaxis básica
 
 ### 1.1 Fórmula general

@@ -32,6 +32,18 @@ Este documento cubre todo lo necesario para **consultar datos** en tablas:
 Para que los ejemplos sean claros, trabajaremos con estas tablas:
 
 ```sql
+-- =============================================
+-- EJECUTAR ESTO PRIMERO para poder practicar
+-- (puedes ejecutar este bloque las veces que quieras,
+--  el DROP borra las tablas si ya existen)
+-- =============================================
+
+-- Borrar tablas si ya existen (orden: hijas primero, padres después)
+DROP TABLE IF EXISTS ventas CASCADE;
+DROP TABLE IF EXISTS productos CASCADE;
+DROP TABLE IF EXISTS categorias CASCADE;
+DROP TABLE IF EXISTS clientes CASCADE;
+
 CREATE TABLE categorias (
   id INT PRIMARY KEY,
   nombre VARCHAR(50) NOT NULL
