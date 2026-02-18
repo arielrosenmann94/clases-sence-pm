@@ -5,7 +5,7 @@ Estructura: DDL listo + 5 fáciles + 3 avanzados + 7 de pensar
 Motor: PostgreSQL (Supabase)
 ========================================================= -->
 
-# 🏋️ Ejercicio DML — Gimnasio IronFit
+# 🏋️ Ejercicio DML — Gimnasio IronFat
 
 ---
 
@@ -273,7 +273,7 @@ La socia **Sofía Cárdenas** (id 3) quiere cambiar de membresía **Básica** ($
 
 ---
 
-# 🔴 Nivel nivel avanzado — Desafíos de Pensar (Requerimientos 9 al 15)
+# 🔴 Nivel avanzado — Desafíos de Pensar (Requerimientos 9 al 15)
 
 > Aquí **no te damos la consulta armada**. Te damos lo que el negocio necesita saber y tú decides cómo resolverlo.
 
