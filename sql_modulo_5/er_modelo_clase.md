@@ -10,7 +10,7 @@ Partes: Parte 1 (ER base) + Parte 2 (Transformación y Normalización)
 
 ---
 
-# 📚 PARTE 1 — El Modelo Conceptual
+# 📚 El Modelo Conceptual
 
 ---
 
@@ -140,9 +140,6 @@ Base de datos de un TALLER MECÁNICO:
   Toyota Corolla → patente, modelo, año, kilometraje
   (el color de los stickers NO importa para el taller)
 
-Base de datos de un SEGURO DE AUTO:
-  Toyota Corolla → patente, dueño, valor comercial, siniestros
-  (el kilometraje NO importa para el seguro)
 ```
 
 **Abstraer = quedarte SOLO con lo relevante para tu sistema.** El mismo auto guarda datos distintos según quién lo necesite.
