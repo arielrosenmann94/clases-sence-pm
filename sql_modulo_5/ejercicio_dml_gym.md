@@ -159,6 +159,8 @@ INSERT INTO pagos (id_socio, monto, metodo, concepto) VALUES
   (10, 34990, 'débito',        'mensualidad'),
   (11, 29990, 'transferencia', 'mensualidad'),
   (12, 19990, 'efectivo',      'mensualidad');
+
+
 ```
 
 ### Verificación rápida
