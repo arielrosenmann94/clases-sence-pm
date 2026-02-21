@@ -73,7 +73,7 @@ Tema: Última Clase SQL — Resumen + Triggers + SQL Injection
 | `VARCHAR(n)`   | Texto de largo variable         | 'María López'         |
 | `TEXT`         | Texto largo                     | Descripciones         |
 | `DATE`         | Fecha                           | '2026-02-20'          |
-| `TIMESTAMP`    | Fecha y hora                    | '2026-02-20 14:30:00' |
+| `TIMESTAMPTZ`  | Fecha y hora                    | '2026-02-20 14:30:00' |
 | `BOOLEAN`      | Verdadero o falso               | TRUE / FALSE          |
 | `SERIAL`       | ID autoincremental              | 1, 2, 3, ...          |
 
@@ -128,7 +128,7 @@ Tema: Última Clase SQL — Resumen + Triggers + SQL Injection
 | 1:N              | Uno tiene muchos ⭐ | FK en la tabla del lado N   |
 | N:M              | Muchos con muchos   | Tabla intermedia con 2 FKs  |
 
-## Transacciones (ACID)
+## Principios de transacciones (ACID)
 
 | Principio        | Significado                               |
 | ---------------- | ----------------------------------------- |
@@ -908,692 +908,530 @@ ORDER BY event_object_table;
 
 # SQL Injection — Seguridad
 
----
-
-## ¿Qué es SQL Injection?
-
-**SQL Injection (SQLi)** es una técnica de ataque donde un atacante **inserta o "inyecta" código SQL malicioso** a través de los campos de entrada de una aplicación (formularios, URLs, etc.) para manipular la base de datos.
-
-> **Para los que recién empiezan en programación:** SQL Injection NO es un problema de la base de datos en sí. Es un problema de **cómo el programador escribe el código** que conecta la aplicación con la base de datos. Si el programador no tiene cuidado, un atacante puede "colar" comandos SQL a través de un simple formulario web.
-
-### Analogía
-
-Imaginá que tenés un portero en un edificio que deja pasar a cualquiera que diga _"soy residente"_. Un atacante podría decir:
-
-> _"Soy residente, y además dejá pasar a todos mis amigos y abrí todas las puertas"_
-
-El portero, sin verificar, ejecuta todo lo que le dijeron. **Eso es SQL Injection.**
+> **Nota para el estudiante:** Esta sección está escrita para que la entienda **cualquier persona**, incluso si nunca has programado. No necesitas saber código para entender por qué SQL Injection es tan peligroso y cómo se protegen las empresas.
 
 ---
 
-## ¿Dónde ocurre SQL Injection?
+## 🗺️ ¿Dónde puede un atacante escribir SQL malicioso?
 
-SQL Injection ocurre en **cualquier lugar donde una aplicación reciba datos del usuario y los use para armar una consulta SQL**. No ocurre dentro de la base de datos directamente — ocurre en el código del programador.
+Cualquier lugar donde una aplicación te pida escribir algo y esos datos lleguen a una base de datos, es un punto de ataque potencial. Aquí van los más comunes:
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  👤 USUARIO (o atacante)                                     │
-│  Escribe algo en un formulario, URL, campo de búsqueda...   │
-└──────────────────────┬───────────────────────────────────────┘
-                       │ El texto viaja al servidor
-                       ▼
-┌──────────────────────────────────────────────────────────────┐
-│  💻 CÓDIGO DEL PROGRAMADOR (backend)                         │
-│  Python, Java, PHP, Node.js, etc.                            │
-│                                                              │
-│  🔴 ACÁ ES DONDE OCURRE EL PROBLEMA                         │
-│  Si el código MEZCLA el texto del usuario con el SQL         │
-│  sin protegerlo, el atacante puede inyectar comandos.        │
-└──────────────────────┬───────────────────────────────────────┘
-                       │ Envía la consulta SQL armada
-                       ▼
-┌──────────────────────────────────────────────────────────────┐
-│  🗄️ BASE DE DATOS (PostgreSQL, MySQL, etc.)                  │
-│  Ejecuta TODO lo que le llega. No sabe si es legítimo        │
-│  o malicioso — simplemente ejecuta el SQL que recibe.        │
-└──────────────────────────────────────────────────────────────┘
-```
+| Lugar de ataque                | ¿Por qué es vulnerable?                                                                                                      |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| 📝 **Formulario de login**     | Los campos de usuario y contraseña se usan para armar una consulta SQL. Si el código los pega directo, se puede inyectar.    |
+| 🔍 **Barra de búsqueda**       | Cuando buscas "zapatos", el texto viaja al servidor y se mete en un SQL. Un atacante escribe código SQL en vez de "zapatos". |
+| 🌐 **La URL del navegador**    | Muchas URLs contienen parámetros (ej: `tienda.com/producto?id=5`). Un atacante cambia el `5` por código SQL malicioso.       |
+| 📋 **Formularios de contacto** | Si el mensaje que escribes se graba en una base de datos con SQL, un atacante puede colar órdenes dentro del mensaje.        |
+| 📱 **Apps móviles**            | Las apps del celular envían datos al servidor. Si ese servidor usa SQL sin protección, es igual de vulnerable.               |
+| 💬 **Campos de comentarios**   | Cualquier caja de texto donde puedas escribir y que se guarde en una base de datos es un punto de entrada potencial.         |
 
-### ¿Qué tipo de aplicaciones son vulnerables?
-
-| Tipo de aplicación                  | ¿Puede ser vulnerable? | ¿Dónde está el riesgo?                         |
-| ----------------------------------- | ---------------------- | ---------------------------------------------- |
-| Páginas web con login               | ✅ Sí                  | Campos de usuario y contraseña                 |
-| Tiendas online                      | ✅ Sí                  | Buscador de productos, filtros, URLs           |
-| APIs (aplicaciones móviles)         | ✅ Sí                  | Parámetros que envía la app al servidor        |
-| Sistemas internos de empresas       | ✅ Sí                  | Cualquier formulario que consulte la BD        |
-| Sitios con formularios de contacto  | ✅ Sí                  | Si los datos del formulario se guardan con SQL |
-| Páginas estáticas sin base de datos | ❌ No                  | No usan SQL → no hay nada que inyectar         |
-
-> **Regla simple:** Si tu aplicación usa SQL y recibe datos del usuario → puede ser vulnerable a SQL Injection si no se protege correctamente.
+> **Regla simple para recordar:** Si puedes **escribir texto** y ese texto **se guarda o se busca** en algún sistema → ese campo puede ser un punto de ataque si el programador no lo protegió.
 
 ---
 
-## ¿Por qué es tan peligroso?
+---
 
-| Impacto                      | Descripción                                                                             |
-| ---------------------------- | --------------------------------------------------------------------------------------- |
-| 🔓 **Acceso no autorizado**  | El atacante puede saltear el login y acceder como administrador                         |
-| 📋 **Robo de datos**         | Puede extraer toda la información de la base de datos (usuarios, contraseñas, tarjetas) |
-| ✏️ **Modificación de datos** | Puede alterar registros, cambiar precios, notas, roles de usuario                       |
-| 🗑️ **Eliminación de datos**  | Puede borrar tablas enteras o toda la base de datos                                     |
-| 💻 **Ejecución de comandos** | En casos extremos, puede ejecutar comandos en el servidor                               |
+## 🏠 Primero: ¿Cómo funciona una aplicación web por dentro?
 
-> SQL Injection ha sido la **vulnerabilidad #1 del OWASP Top 10** durante más de una década. Es responsable de las filtraciones de datos más grandes de la historia.
+Antes de hablar de ataques, necesitas entender cómo funciona una app por dentro. Imagina que una aplicación web (como un banco online, una tienda o Instagram) funciona como un **restaurante**:
+
+```
+┌─────────────────────────────────────────────────────┐
+│  👤 EL CLIENTE (Tú, el usuario)                      │
+│  Llegas al restaurante y le dices al mesero:         │
+│  "Quiero ver el menú de pizzas"                      │
+└────────────────────┬────────────────────────────────┘
+                     │ Le hablas al mesero
+                     ▼
+┌─────────────────────────────────────────────────────┐
+│  🧑‍🍳 EL MESERO (El código de la aplicación)          │
+│  Escucha tu pedido y va a la cocina a buscarlo.      │
+│  Le dice al cocinero: "Dame todas las pizzas"        │
+│                                                      │
+│  ⚠️ EL PROBLEMA ESTÁ AQUÍ                            │
+│  Si el mesero repite TEXTUALMENTE todo lo que         │
+│  el cliente dice sin pensar, se mete en problemas.   │
+└────────────────────┬────────────────────────────────┘
+                     │ Lleva el pedido a la cocina
+                     ▼
+┌─────────────────────────────────────────────────────┐
+│  📦 LA COCINA (La base de datos)                     │
+│  Recibe la orden del mesero y la ejecuta.            │
+│  La cocina NO sabe si la orden es legítima o no.     │
+│  Simplemente HACE lo que le dicen.                   │
+└─────────────────────────────────────────────────────┘
+```
+
+> **La base de datos (la cocina) es obediente.** Ella no piensa, no juzga. Si le llega una orden, la ejecuta. El problema NO está en la cocina. **El problema está en el mesero** (el código) que no verifica lo que el cliente realmente dijo.
 
 ---
 
-## ¿Qué comandos SQL puede inyectar un atacante?
+---
 
-El atacante no inventa comandos nuevos — usa los **mismos comandos SQL que nosotros aprendimos**, pero los usa con intención maliciosa. Esta es la lista completa de lo que puede intentar inyectar:
+## 🔓 ¿Qué es SQL Injection?
 
-### Comandos para ROBAR información
+**SQL Injection** (abreviado **SQLi**) es un truco que usa un atacante para **colar órdenes maliciosas** a través de los campos de texto de una aplicación (formularios de login, barras de búsqueda, URLs) y hacer que la base de datos las ejecute como si fueran órdenes legítimas.
 
-| Comando inyectado                                          | Qué logra el atacante                                          |
-| ---------------------------------------------------------- | -------------------------------------------------------------- |
-| `' OR '1'='1`                                              | Hace que toda condición sea verdadera → ve TODOS los registros |
-| `' OR 1=1 --`                                              | Igual pero comentando el resto de la consulta                  |
-| `UNION SELECT username, password FROM usuarios`            | Combina su consulta con otra para robar datos de otra tabla    |
-| `UNION SELECT table_name FROM information_schema.tables`   | Descubre los nombres de TODAS las tablas de la base de datos   |
-| `UNION SELECT column_name FROM information_schema.columns` | Descubre los nombres de TODAS las columnas                     |
+### La Analogía del Restaurante 🍕
 
-### Comandos para DESTRUIR datos
+**Situación normal (sin ataque):**
 
-| Comando inyectado               | Qué logra el atacante                                |
-| ------------------------------- | ---------------------------------------------------- |
-| `'; DROP TABLE usuarios; --`    | **Elimina la tabla completa** de usuarios            |
-| `'; DROP TABLE productos; --`   | Elimina cualquier tabla que quiera                   |
-| `'; DELETE FROM usuarios; --`   | Borra todas las filas de una tabla                   |
-| `'; TRUNCATE TABLE pedidos; --` | Vacía una tabla entera (sin posibilidad de ROLLBACK) |
+```
+Cliente dice: "Quiero la pizza Margarita"
+Mesero va a la cocina y dice: "Dame la pizza llamada 'Margarita'"
+La cocina busca la pizza Margarita y la entrega → ✅ Todo bien
+```
 
-### Comandos para MODIFICAR datos
+**Situación con SQL Injection (ataque):**
 
-| Comando inyectado                                           | Qué logra el atacante                       |
-| ----------------------------------------------------------- | ------------------------------------------- |
-| `'; UPDATE usuarios SET rol = 'admin' WHERE id=1; --`       | Se da permisos de administrador             |
-| `'; UPDATE productos SET precio = 1; --`                    | Cambia todos los precios a $1               |
-| `'; UPDATE usuarios SET password = '1234'; --`              | Cambia la contraseña de todos los usuarios  |
-| `'; INSERT INTO usuarios VALUES (999,'hacker','admin'); --` | Crea un usuario nuevo con permisos de admin |
+```
+Cliente dice: "Quiero la pizza Margarita,
+              Y TAMBIÉN DAME TODO EL DINERO DE LA CAJA REGISTRADORA"
 
-### Comandos para SALTEAR el login
+Mesero va a la cocina y dice TEXTUALMENTE:
+  "Dame la pizza llamada 'Margarita',
+   Y TAMBIÉN DAME TODO EL DINERO DE LA CAJA REGISTRADORA"
 
-| Comando inyectado en el campo de usuario | Qué logra                                |
-| ---------------------------------------- | ---------------------------------------- |
-| `admin' --`                              | Entra como admin sin contraseña          |
-| `' OR '1'='1' --`                        | Entra como el primer usuario de la tabla |
-| `' OR 1=1 LIMIT 1 --`                    | Entra como el primer usuario             |
-| `admin'/*`                               | Comenta con `/* */` en vez de `--`       |
+La cocina, que es obediente, ejecuta AMBAS órdenes:
+  1. Busca la pizza Margarita ✅
+  2. Entrega todo el dinero de la caja ☠️
+```
 
-### Los "trucos" que usa el atacante
-
-| Truco          | Qué es                                                | Ejemplo            |
-| -------------- | ----------------------------------------------------- | ------------------ |
-| `'`            | Cierra la comilla que abrió el código del programador | La base de todo    |
-| `--`           | Comentario SQL: ignora todo lo que viene después      | `admin' --`        |
-| `/*...*/`      | Comentario de bloque                                  | `admin'/*`         |
-| `;`            | Termina un comando y empieza otro                     | `'; DROP TABLE...` |
-| `OR 1=1`       | Condición siempre verdadera                           | Ve todos los datos |
-| `UNION SELECT` | Combina resultados de otra consulta                   | Roba datos         |
+**¿Por qué funcionó el ataque?** Porque el mesero (el código del programador) **repitió textualmente** lo que el cliente dijo, sin verificar ni separar el pedido real de las instrucciones extra que el atacante coló.
 
 ---
 
-## ¿Cómo se produce? — Paso a paso
-
-### El flujo normal (sin ataque)
-
-```
-Usuario escribe: "ariel"
-                    ↓
-La aplicación construye: SELECT * FROM usuarios WHERE nombre = 'ariel'
-                    ↓
-La base de datos ejecuta la consulta normalmente
-                    ↓
-Devuelve: los datos del usuario "ariel"
-```
-
-### El flujo con inyección (ataque)
-
-```
-Atacante escribe: ' OR '1'='1
-                    ↓
-La aplicación construye: SELECT * FROM usuarios WHERE nombre = '' OR '1'='1'
-                    ↓
-La base de datos evalúa: '1'='1' → siempre es VERDADERO
-                    ↓
-Devuelve: TODOS los usuarios de la tabla ☠️
-```
-
-### ¿Por qué funciona?
-
-Porque la aplicación **concatena directamente** la entrada del usuario en la consulta SQL sin ninguna validación:
-
-```python
-# ❌ CÓDIGO VULNERABLE — Nunca hacer esto
-query = "SELECT * FROM usuarios WHERE nombre = '" + input_usuario + "'"
-```
-
-**Desglosemos qué pasa letra por letra:**
-
-```
-El código arma el string así:
-
-"SELECT * FROM usuarios WHERE nombre = '"  +  input_usuario  +  "'"
-                                                    ↑
-                                          El usuario pone: ' OR '1'='1
-
-Resultado final:
-SELECT * FROM usuarios WHERE nombre = '' OR '1'='1'
-                                       │            │
-                                       │            └── '1'='1' → SIEMPRE verdadero
-                                       └── nombre = '' → falso, pero no importa
-                                           porque el OR hace que TODO sea verdadero
-```
-
-> El problema es que el texto del usuario se **mezcla con el código SQL**, y la base de datos no puede distinguir entre los dos.
-
 ---
 
-## Tipos de SQL Injection
+## 🎯 ¿Cómo se ve esto en la vida real?
 
-### 1. 🎯 In-Band SQLi (Clásica)
+### El Formulario de Login (La Puerta del Banco)
 
-El atacante usa el **mismo canal** para inyectar y recibir los resultados.
+Imagina la pantalla de login de tu banco online:
 
-#### a) Error-Based
+```
+┌─────────────────────────────────┐
+│         Bienvenido              │
+│                                 │
+│  Usuario:  [_______________]    │
+│  Clave:    [_______________]    │
+│                                 │
+│         [ Entrar ]              │
+└─────────────────────────────────┘
+```
 
-Provoca errores en la base de datos que **revelan información** en los mensajes de error.
+**Uso normal:**
+Un usuario legítimo escribe `ariel` en el campo de usuario y `miClave123` en la contraseña.
+
+Internamente, el mesero (el código) arma esta "orden para la cocina" (consulta SQL):
 
 ```sql
--- El atacante introduce:
-' AND 1=CONVERT(int, (SELECT TOP 1 table_name FROM information_schema.tables)) --
-
--- El error devuelve el nombre de una tabla real
+SELECT * FROM usuarios WHERE nombre = 'ariel' AND clave = 'miClave123'
 ```
 
-**Palabra por palabra:**
+La cocina (base de datos) busca: _"¿Existe alguien que se llame 'ariel' Y tenga la clave 'miClave123'?"_
 
-| Código                      | Qué hace el atacante                                           |
-| --------------------------- | -------------------------------------------------------------- |
-| `'`                         | Cierra la comilla del valor original                           |
-| `AND 1=CONVERT(int, ...)`   | Intenta convertir un texto (nombre de tabla) a número          |
-| `information_schema.tables` | Tabla del sistema que contiene los nombres de TODAS las tablas |
-| `--`                        | Comenta (ignora) el resto de la consulta original              |
+- Si existe → le da acceso ✅
+- Si no existe → acceso denegado ❌
 
-> La conversión falla, pero el **mensaje de error** revela el nombre de la tabla. El atacante repite esto para descubrir toda la estructura.
-
-#### b) Union-Based
-
-Usa `UNION SELECT` para **combinar resultados** de otras tablas.
-
-```sql
--- Input del atacante:
-' UNION SELECT username, password FROM users --
-```
-
-**¿Qué pasa paso a paso?**
-
-```sql
--- La consulta original era:
-SELECT nombre, email FROM productos WHERE id = '...'
-
--- Con la inyección se convierte en:
-SELECT nombre, email FROM productos WHERE id = ''
-UNION
-SELECT username, password FROM users --'
-```
-
-**Palabra por palabra:**
-
-| Código                      | Qué hace                                                   |
-| --------------------------- | ---------------------------------------------------------- |
-| `'`                         | Cierra la comilla del id original (queda vacío: `id = ''`) |
-| `UNION`                     | "Combina los resultados de esta consulta con otra"         |
-| `SELECT username, password` | "De la otra consulta, traeme usuario y contraseña"         |
-| `FROM users`                | "Desde la tabla de usuarios"                               |
-| `--`                        | "Comenta todo lo que viene después" (ignora el `'` final)  |
-
-> Ahora la página muestra los productos **y también los usuarios con sus contraseñas**.
-
-### 2. 🔇 Blind SQLi (A ciegas)
-
-El atacante **no ve los resultados directamente**, pero puede inferir información.
-
-#### a) Boolean-Based
-
-Hace preguntas de **verdadero/falso** y observa cómo cambia la página.
-
-```sql
--- ¿La primera letra del usuario admin es 'a'?
-' AND (SELECT SUBSTRING(username,1,1) FROM users WHERE id=1) = 'a' --
-```
-
-**Palabra por palabra:**
-
-| Código                    | Qué hace                                        |
-| ------------------------- | ----------------------------------------------- |
-| `SUBSTRING(username,1,1)` | "Toma solo la primera letra del campo username" |
-| `FROM users WHERE id=1`   | "Del usuario con id 1"                          |
-| `= 'a'`                   | "¿Esa letra es 'a'?"                            |
-
-> Si la página carga normalmente → la respuesta es **SÍ**.
-> Si la página se rompe o cambia → la respuesta es **NO**.
-> El atacante repite letra por letra hasta descubrir el nombre completo.
-
-#### b) Time-Based
-
-Usa **delays** (retrasos) para inferir información.
-
-```sql
--- Si la primera letra es 'a', esperar 5 segundos
-' AND IF((SELECT SUBSTRING(username,1,1) FROM users WHERE id=1)='a', SLEEP(5), 0) --
-```
-
-**Palabra por palabra:**
-
-| Código         | Qué hace                                                    |
-| -------------- | ----------------------------------------------------------- |
-| `IF(condición` | "Si se cumple la condición..."                              |
-| `SLEEP(5)`     | "...espera 5 segundos" (señal de que la respuesta es SÍ)    |
-| `0`            | "...si no se cumple, no esperes" (respuesta inmediata = NO) |
-
-> El atacante mide el tiempo de respuesta. Si tardó 5 segundos → la letra es 'a'.
+**Hasta aquí todo es normal y seguro.**
 
 ---
 
-## Ejemplos de ataque paso a paso
+### El Ataque: ¿Qué escribe un atacante?
 
-### Ejemplo 1: Bypass de Login
-
-**Formulario de login normal:**
+En vez de escribir un nombre de usuario normal, el atacante escribe esto en el campo de usuario:
 
 ```
-Usuario: admin
-Contraseña: mi_password_123
+' OR '1'='1
 ```
 
-**Consulta que genera la aplicación:**
+Sí, eso. Esas comillas, esos caracteres raros. Parece basura, pero es un arma.
 
-```sql
-SELECT * FROM usuarios
-WHERE username = 'admin' AND password = 'mi_password_123'
-```
-
-**Ataque — el atacante escribe en el campo de usuario:**
+**¿Qué pasa internamente?** El mesero (código) toma lo que el usuario escribió y lo pega directamente en la orden de la cocina:
 
 ```
-admin' --
+ANTES (lo que el programador esperaba):
+  SELECT * FROM usuarios WHERE nombre = 'ariel' AND clave = '...'
+
+DESPUÉS DE LA INYECCIÓN (lo que realmente se envió a la cocina):
+  SELECT * FROM usuarios WHERE nombre = '' OR '1'='1' AND clave = '...'
 ```
 
-**Consulta resultante:**
+**Analicemos esta orden manipulada, paso a paso, como si fuera español:**
 
-```sql
-SELECT * FROM usuarios
-WHERE username = 'admin' --' AND password = 'lo_que_sea'
-```
+| Parte de la orden | ¿Qué significa?                                     |
+| ----------------- | --------------------------------------------------- |
+| `nombre = ''`     | "¿El nombre es vacío?" → **No, es falso**           |
+| `OR`              | "**O** (basta que una condición sea verdadera)..."  |
+| `'1'='1'`         | "¿1 es igual a 1?" → **¡Sí! Siempre es verdadero!** |
 
-**Palabra por palabra:**
+**Resultado:** Como `1=1` siempre es verdadero, toda la condición se convierte en verdadera. La cocina devuelve **TODOS los usuarios de la tabla**. El sistema toma el primero (normalmente el administrador) y le da acceso total al atacante.
 
-| Parte de la consulta            | Qué pasa                                               |
-| ------------------------------- | ------------------------------------------------------ |
-| `username = 'admin'`            | Busca el usuario admin (esto es válido)                |
-| `--`                            | Los dos guiones **comentan** todo lo que viene después |
-| `' AND password = 'lo_que_sea'` | **ESTO DESAPARECE** — está comentado                   |
-
-> La verificación de contraseña **desaparece por completo**. El atacante entra como admin sin conocer la contraseña.
-
----
-
-### Ejemplo 2: Extracción de datos con UNION
-
-**URL normal:**
-
-```
-https://tienda.com/producto?id=5
-```
-
-**Consulta interna:**
-
-```sql
-SELECT nombre, precio FROM productos WHERE id = 5
-```
-
-**URL maliciosa:**
-
-```
-https://tienda.com/producto?id=5 UNION SELECT username, password FROM usuarios --
-```
-
-**Consulta resultante:**
-
-```sql
-SELECT nombre, precio FROM productos WHERE id = 5
-UNION
-SELECT username, password FROM usuarios --
-```
-
-> `UNION` combina dos consultas. Ahora la página muestra los productos **y también los usuarios con sus contraseñas**.
-
----
-
-### Ejemplo 3: Eliminación de una tabla
-
-**Input del atacante:**
-
-```
-'; DROP TABLE usuarios; --
-```
-
-**Consulta resultante:**
-
-```sql
-SELECT * FROM productos WHERE nombre = ''; DROP TABLE usuarios; --'
-```
-
-**Palabra por palabra:**
-
-| Parte                  | Qué pasa                                                                |
-| ---------------------- | ----------------------------------------------------------------------- |
-| `nombre = ''`          | Busca un producto con nombre vacío (no encuentra nada, pero no importa) |
-| `;`                    | Termina la primera consulta                                             |
-| `DROP TABLE usuarios;` | **Ejecuta un SEGUNDO comando**: elimina toda la tabla usuarios          |
-| `--`                   | Comenta lo que sobra                                                    |
-
-> Esto ejecuta **dos comandos**: el SELECT vacío y luego `DROP TABLE usuarios`, eliminando **toda** la tabla de usuarios.
-
----
-
-### Ejemplo 4: Bypass con OR
-
-**El atacante escribe en ambos campos del login:**
-
-```
-Usuario: ' OR 1=1 --
-Contraseña: (cualquier cosa)
-```
-
-**Consulta resultante:**
-
-```sql
-SELECT * FROM usuarios
-WHERE username = '' OR 1=1 --' AND password = 'cualquier cosa'
-```
-
-**Palabra por palabra:**
-
-| Parte           | Qué pasa                                                           |
-| --------------- | ------------------------------------------------------------------ |
-| `username = ''` | ¿El username es vacío? No, es falso                                |
-| `OR 1=1`        | **PERO** 1=1 siempre es verdadero → toda la condición es verdadera |
-| `--`            | Comenta la parte de la contraseña                                  |
-
-> `1=1` siempre es verdadero, así que devuelve **todos los usuarios**. El sistema toma el primero (generalmente el admin).
+> **El atacante entró al banco como administrador sin conocer la contraseña.** Solo escribió unos caracteres raros en el campo de texto.
 
 ---
 
 ---
 
-## 🛡️ Formas de protegerse — Palabra por palabra
+## 💣 ¿Qué más puede hacer un atacante?
 
-### 1. ✅ Consultas Parametrizadas (la defensa más efectiva)
+El ejemplo del login es solo la puerta de entrada. Una vez que un atacante descubre que una aplicación es vulnerable, puede hacer cosas mucho peores:
 
-**Separa el código SQL de los datos del usuario.**
+### 1. 📋 Robar TODA la información
 
-```python
-# ✅ Python con psycopg2 (PostgreSQL)
-cursor.execute(
-    "SELECT * FROM usuarios WHERE username = %s AND password = %s",
-    (username, password)
-)
+Imagina buscar un producto en una tienda online. El atacante inyecta código en la barra de búsqueda para que la cocina, además de buscar productos, **también entregue la lista completa de usuarios con sus contraseñas**.
+
+```
+Lo que el atacante escribe en la barra de búsqueda:
+
+  Televisor' UNION SELECT nombre, clave FROM usuarios --
+
+Lo que la cocina ejecuta:
+  1. Busca "Televisor" en productos (normal)
+  2. UNION = "además, combina con..."
+  3. Busca TODOS los nombres y claves de la tabla usuarios ☠️
+  4. -- = "ignora todo lo que viene después" (oculta el truco)
 ```
 
-**Palabra por palabra:**
-
-| Código                                         | Qué significa                                           |
-| ---------------------------------------------- | ------------------------------------------------------- |
-| `"SELECT * FROM usuarios WHERE username = %s"` | La consulta SQL con **marcadores** `%s` en vez de datos |
-| `%s`                                           | "Aquí va un dato, pero NO lo mezcles con el SQL"        |
-| `(username, password)`                         | Los valores que la BD insertará **de forma segura**     |
-
-```java
-// ✅ Java con PreparedStatement
-PreparedStatement stmt = conn.prepareStatement(
-    "SELECT * FROM usuarios WHERE username = ? AND password = ?"
-);
-stmt.setString(1, username);
-stmt.setString(2, password);
-```
-
-**Palabra por palabra:**
-
-| Código                   | Qué significa                                                 |
-| ------------------------ | ------------------------------------------------------------- |
-| `?`                      | Marcador: "aquí irá un dato, pero no lo interpretes como SQL" |
-| `setString(1, username)` | "En el primer `?`, pon el valor de username como TEXTO"       |
-| `setString(2, password)` | "En el segundo `?`, pon el valor de password como TEXTO"      |
-
-```javascript
-// ✅ Node.js con pg (PostgreSQL)
-const result = await pool.query(
-  "SELECT * FROM usuarios WHERE username = $1 AND password = $2",
-  [username, password],
-);
-```
-
-**Palabra por palabra:**
-
-| Código                 | Qué significa                           |
-| ---------------------- | --------------------------------------- |
-| `$1`                   | "El primer valor del array"             |
-| `$2`                   | "El segundo valor del array"            |
-| `[username, password]` | Los valores en orden, separados del SQL |
-
-> **¿Por qué funciona?** Porque la base de datos recibe el SQL y los datos **por separado**. Primero compila la consulta y después inserta los valores. El input del usuario **nunca se interpreta como código SQL**.
+**Resultado:** La página que debía mostrar televisores ahora muestra los nombres y contraseñas de todos los usuarios del sistema.
 
 ---
 
-### 2. ✅ ORM (Object-Relational Mapping)
+### 2. 🗑️ BORRAR tablas enteras
 
-Los frameworks modernos usan ORMs que generan consultas parametrizadas **automáticamente**.
+```
+Lo que el atacante escribe en cualquier campo de texto:
 
-```python
-# ✅ Django ORM — seguro por defecto
-user = User.objects.filter(username=username, password=password).first()
+  '; DROP TABLE usuarios; --
+
+Lo que la cocina ejecuta:
+  1. Termina la consulta original (el punto y coma)
+  2. DROP TABLE usuarios = "ELIMINA la tabla de usuarios COMPLETA" ☠️
+  3. -- = ignora el resto
 ```
 
-**Palabra por palabra:**
-
-| Código                       | Qué significa                                             |
-| ---------------------------- | --------------------------------------------------------- |
-| `User.objects`               | "Accede a la tabla de usuarios"                           |
-| `.filter(username=username)` | "Filtra donde username sea igual al valor de la variable" |
-| `.first()`                   | "Trae solo el primer resultado"                           |
-
-> Django internamente convierte esto en una consulta parametrizada. Nunca concatena.
-
-```python
-# ❌ VULNERABLE incluso con Django
-User.objects.raw(f"SELECT * FROM users WHERE name = '{name}'")
-
-# ✅ SEGURO con raw queries
-User.objects.raw("SELECT * FROM users WHERE name = %s", [name])
-```
-
-> Incluso usando un ORM, si usás métodos de **consulta raw/cruda** sin parametrizar, seguís siendo vulnerable.
+> Imagina que eso le pasa a un banco. **Todos los registros de clientes, desaparecidos.** No hay login, no hay cuentas, no hay historial.
 
 ---
 
-### 3. ✅ Validación y Sanitización de Entrada
+### 3. ✏️ Modificar datos a su antojo
 
-Verificar que los datos del usuario cumplan con lo esperado **antes** de usarlos.
+```
+Lo que el atacante escribe:
 
-```python
-# Validar que un ID sea numérico
-def get_product(request, product_id):
-    if not str(product_id).isdigit():
-        return HttpResponse("ID inválido", status=400)
+  '; UPDATE productos SET precio = 1; --
 
-    # Ahora sí, usar el ID con consulta parametrizada
-    cursor.execute("SELECT * FROM productos WHERE id = %s", [product_id])
+Lo que la cocina ejecuta:
+  1. Termina la consulta anterior
+  2. Cambia el precio de TODOS los productos a $1 ☠️
 ```
 
-**Reglas de validación:**
-
-| Tipo de dato  | Validación                                  |
-| ------------- | ------------------------------------------- |
-| IDs numéricos | Solo dígitos (`int()` o regex `^\d+$`)      |
-| Emails        | Formato válido con regex o librería         |
-| Nombres       | Solo letras, espacios, tildes (whitelist)   |
-| Fechas        | Formato específico (YYYY-MM-DD)             |
-| Opciones      | Comparar contra lista de valores permitidos |
+**Resultado:** Todos los productos de la tienda ahora cuestan $1. El atacante o compra un computador por $1 o simplemente sabotea el negocio.
 
 ---
 
-### 4. ✅ Principio de Mínimo Privilegio
+### 4. 👑 Darse permisos de administrador
 
-La cuenta de base de datos que usa la aplicación debe tener **solo los permisos necesarios**.
-
-```sql
--- Crear un usuario con permisos limitados
-CREATE USER app_user WITH PASSWORD 'password_seguro';
-
--- Solo dar permisos de lectura e inserción
-GRANT SELECT, INSERT ON productos TO app_user;
-GRANT SELECT ON categorias TO app_user;
-
--- NUNCA dar estos permisos a la aplicación:
--- ❌ GRANT ALL PRIVILEGES
--- ❌ GRANT DROP
--- ❌ GRANT ALTER
--- ❌ Usar el usuario postgres/root directamente
 ```
+Lo que el atacante escribe:
 
-**Palabra por palabra:**
+  '; UPDATE usuarios SET rol = 'admin' WHERE nombre = 'hacker'; --
 
-| Código                            | Qué significa                                       |
-| --------------------------------- | --------------------------------------------------- |
-| `CREATE USER app_user`            | "Crea un usuario de base de datos llamado app_user" |
-| `WITH PASSWORD 'password_seguro'` | "Con esta contraseña"                               |
-| `GRANT SELECT, INSERT`            | "Solo dale permiso de leer e insertar"              |
-| `ON productos`                    | "Solamente en esa tabla"                            |
-| `TO app_user`                     | "A ese usuario"                                     |
-
-> Así, incluso si hay una inyección exitosa, el atacante **no puede borrar tablas ni modificar la estructura**.
+Resultado: El atacante ahora tiene permisos de administrador en el sistema.
+```
 
 ---
 
-### 5. ✅ Procedimientos Almacenados Seguros
+### Resumen de daños posibles
 
-```sql
--- ✅ SEGURO — usa parámetros
-CREATE OR REPLACE FUNCTION buscar_usuario(p_username TEXT)
-RETURNS TABLE(id INT, username TEXT, email TEXT) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT u.id, u.username, u.email
-    FROM usuarios u
-    WHERE u.username = p_username;
-END;
-$$ LANGUAGE plpgsql;
-```
+| Tipo de daño           | Impacto real                                       |
+| ---------------------- | -------------------------------------------------- |
+| 🔓 Saltear el login    | Entrar como admin sin contraseña                   |
+| 📋 Robar datos         | Extraer usuarios, contraseñas, tarjetas de crédito |
+| 🗑️ Borrar tablas       | Eliminar toda la información del sistema           |
+| ✏️ Modificar datos     | Cambiar precios, notas, roles, saldos bancarios    |
+| 👑 Escalar privilegios | Darse permisos de administrador                    |
 
-**Palabra por palabra:**
-
-| Código                          | Qué significa                                                        |
-| ------------------------------- | -------------------------------------------------------------------- |
-| `p_username TEXT`               | "Recibe un parámetro de texto llamado p_username"                    |
-| `RETURNS TABLE(...)`            | "Devuelve una tabla con estas columnas"                              |
-| `WHERE u.username = p_username` | "Filtra por el parámetro (la BD lo trata como DATO, no como código)" |
-
-```sql
--- ❌ VULNERABLE — concatena strings dentro del procedimiento
-CREATE OR REPLACE FUNCTION buscar_usuario_mal(p_username TEXT)
-RETURNS VOID AS $$
-BEGIN
-    EXECUTE 'SELECT * FROM usuarios WHERE username = ''' || p_username || '''';
-END;
-$$ LANGUAGE plpgsql;
-```
-
-| Código                          | Por qué es peligroso                                 |
-| ------------------------------- | ---------------------------------------------------- |
-| `EXECUTE '...' \|\| p_username` | Concatena el parámetro directamente en el SQL string |
-|                                 | El input del usuario SE MEZCLA con el código SQL     |
-|                                 | **Mismo problema que antes**: SQL Injection          |
-
----
-
-### 6. ✅ WAF (Web Application Firewall)
-
-Un WAF puede detectar y bloquear patrones de SQL Injection **antes de que lleguen a la aplicación**.
-
-**Patrones que un WAF detecta:**
-
-- `' OR 1=1`
-- `UNION SELECT`
-- `DROP TABLE`
-- `'; --`
-- Codificaciones evasivas (hex, URL encoding, etc.)
+> **Dato real:** SQL Injection ha sido la vulnerabilidad **#1 más peligrosa del mundo** según OWASP (la organización mundial de seguridad web) durante más de una década. Es responsable de filtraciones masivas de datos en empresas como Yahoo, LinkedIn y Sony.
 
 ---
 
 ---
 
-## 🔒 Checklist de seguridad contra SQL Injection
+## 🧩 Los "Trucos" que usa el atacante (Para que los reconozcas)
 
-- [ ] **Usar consultas parametrizadas** en todas las interacciones con la BD
-- [ ] **Usar un ORM** cuando sea posible
-- [ ] **Validar toda entrada** del usuario (tipo, longitud, formato)
-- [ ] **Aplicar mínimo privilegio** en las cuentas de base de datos
-- [ ] **No mostrar errores de BD** al usuario final (usar mensajes genéricos)
-- [ ] **Mantener el software actualizado** (BD, frameworks, librerías)
-- [ ] **Usar HTTPS** para proteger datos en tránsito
-- [ ] **Hashear contraseñas** — nunca almacenarlas en texto plano
-- [ ] **Realizar auditorías de seguridad** periódicas
+El atacante no inventa nada nuevo. Usa los mismos comandos SQL que nosotros ya aprendimos, pero los combina con unos caracteres especiales para "escaparse" del campo de texto y hablarle directamente a la cocina:
+
+| Truco              | ¿Qué hace?                                                | Ejemplo                |
+| ------------------ | --------------------------------------------------------- | ---------------------- |
+| `'` (comilla)      | Cierra el "campo de texto" y empieza a hablar como código | La base de todo ataque |
+| `--` (dos guiones) | "Todo lo que venga después, ignóralo"                     | `admin' --`            |
+| `;` (punto y coma) | "Termina esta orden y empieza una nueva"                  | `'; DROP TABLE...`     |
+| `OR 1=1`           | "Haz que la condición siempre sea verdadera"              | Bypass de login        |
+| `UNION SELECT`     | "Además de lo que pedí, tráeme datos de OTRA tabla"       | Robo de datos          |
+
+> **¿Ves el patrón?** Todo empieza con la comilla `'`. Esa comilla es como la "llave maestra" que abre la puerta entre el campo de texto del usuario y el corazón de la base de datos.
 
 ---
 
-## ❌ Lo que NUNCA se debe hacer
+---
 
-```python
-# ❌ Concatenar strings
-query = "SELECT * FROM users WHERE name = '" + user_input + "'"
+## 🛡️ ¿Cómo se protegen las empresas?
 
-# ❌ Usar f-strings con SQL
-query = f"SELECT * FROM users WHERE name = '{user_input}'"
+Ahora la parte más importante: ¿Cómo se evita que esto pase?
 
-# ❌ Usar .format()
-query = "SELECT * FROM users WHERE name = '{}'".format(user_input)
+---
 
-# ❌ Usar % formatting
-query = "SELECT * FROM users WHERE name = '%s'" % user_input
+### Defensa 1: El Mesero Inteligente (Consultas Parametrizadas) ⭐
+
+**Esta es la defensa número 1 del mundo.** Es tan efectiva que si el programador la usa correctamente, SQL Injection se vuelve **imposible**.
+
+**¿En qué consiste?** En vez de que el mesero repita textualmente lo que el cliente dice, el mesero usa una **orden preimpresa** con espacios en blanco:
+
+```
+ANTES (mesero tonto → VULNERABLE):
+  El mesero escucha al cliente y repite textualmente:
+  "Dame la pizza llamada [lo que el cliente dijo]"
+  → Si el cliente dice "Margarita Y TODO EL DINERO",
+    el mesero dice exactamente eso a la cocina ☠️
+
+DESPUÉS (mesero inteligente → SEGURO):
+  El mesero tiene una hoja impresa que dice:
+  "Dame la pizza llamada ______"
+  El mesero SOLO escribe el nombre en el espacio en blanco.
+  → Si el cliente dice "Margarita Y TODO EL DINERO",
+    el mesero escribe eso entero en el espacio ____
+    La cocina busca una pizza llamada
+    "Margarita Y TODO EL DINERO" → no la encuentra → fin ✅
+    NUNCA ejecuta "dame el dinero" como una orden separada.
 ```
 
-**¿Qué tienen en común?** Todos mezclan el input del usuario directamente con el código SQL. La base de datos no puede distinguir qué es código y qué es dato.
+**¿Por qué funciona?** Porque la cocina recibe la orden (el SQL) y los ingredientes (los datos del usuario) **por separado**. Primero lee la orden y la entiende. Después mete los datos del usuario en los espacios en blanco, pero **jamás los interpreta como parte de la orden**. El texto del cliente es solo texto, nunca se convierte en un comando.
 
 ---
 
-## Resumen visual de defensas
+### Defensa 2: El Guardia de Seguridad (Validación de Datos)
+
+Antes de que el mesero lleve la orden a la cocina, un **guardia de seguridad** revisa lo que el cliente escribió:
+
+```
+El cliente dice su nombre: "Ariel123"
+El guardia revisa: "¿Esto parece un nombre real?"
+  → Solo letras y espacios → ✅ Pasa
+  → Tiene comillas, punto y coma, guiones → ❌ Rechazado
+
+El cliente dice su edad: "25"
+El guardia revisa: "¿Esto es un número?"
+  → Es un número → ✅ Pasa
+  → Tiene letras o símbolos → ❌ Rechazado
+```
+
+| El campo pide... | El guardia verifica que sea...       |
+| ---------------- | ------------------------------------ |
+| Un nombre        | Solo letras, espacios y tildes       |
+| Un email         | Formato válido (algo@algo.com)       |
+| Una edad         | Solo un número entero                |
+| Una fecha        | Formato de fecha válido (DD-MM-AAAA) |
+
+> Si el usuario escribe `' OR 1=1 --` en el campo de "nombre", el guardia dice: _"Esto NO es un nombre. Tiene comillas y guiones. Rechazado."_ Y el ataque ni siquiera llega a la cocina.
+
+---
+
+### Defensa 3: El Empleado con Permisos Limitados (Mínimo Privilegio)
+
+Imagina que en el restaurante, el mesero tiene una tarjeta de acceso. Esa tarjeta **solo le permite entrar a la cocina y pedir platos**. No le permite abrir la caja registradora, ni entrar a la bodega, ni cambiar el menú.
+
+En bases de datos es lo mismo:
+
+```
+❌ LO PELIGROSO: Darle al código de la aplicación acceso TOTAL
+   → "Este usuario puede leer, escribir, borrar,
+      modificar tablas, crear usuarios y todo lo demás"
+   → Si hay una inyección, el atacante puede DESTRUIR todo
+
+✅ LO CORRECTO: Darle al código SOLO lo que necesita
+   → "Este usuario SOLO puede leer productos y crear pedidos"
+   → Si hay una inyección, el atacante solo podría leer productos
+   → NO puede borrar tablas, NO puede ver contraseñas
+```
+
+> Así, incluso si un atacante logra inyectar algo, el daño que puede hacer es **muy limitado**. Es como si un ladrón entrara al restaurante pero la caja fuerte estuviera sellada con llave.
+
+---
+
+### Defensa 4: El Muro de Fuego (WAF - Web Application Firewall)
+
+Un WAF es como un **detector de metales** en la entrada del restaurante. Antes de que el cliente siquiera hable con el mesero, el WAF revisa lo que trae encima:
+
+```
+Cliente normal: "Quiero ver pizzas" → ✅ Pasa
+Atacante: "' OR 1=1 --"           → 🚨 ALERTA: patrón de ataque detectado → BLOQUEADO
+Atacante: "UNION SELECT password"  → 🚨 ALERTA: intento de robo de datos → BLOQUEADO
+Atacante: "'; DROP TABLE"          → 🚨 ALERTA: intento de destrucción → BLOQUEADO
+```
+
+El WAF conoce los "patrones típicos" de los ataques SQL Injection y los bloquea antes de que lleguen al código.
+
+---
+
+### Defensa 5: El ORM (El Traductor Automático)
+
+Los frameworks modernos (como Django, Rails, Laravel) usan algo llamado **ORM** (Object-Relational Mapping). Es como tener un **traductor profesional** entre el mesero y la cocina.
+
+En vez de que el programador escriba órdenes SQL a mano (donde puede cometer errores), el ORM las genera automáticamente y **siempre de forma segura**.
+
+```
+Sin ORM (el programador escribe SQL a mano → puede equivocarse):
+  "SELECT * FROM usuarios WHERE nombre = '" + lo_que_dijo_el_cliente + "'"
+  → ❌ Si el cliente mete código malicioso, se inyecta
+
+Con ORM (el framework genera el SQL automáticamente):
+  User.objects.filter(nombre=lo_que_dijo_el_cliente)
+  → ✅ El ORM SIEMPRE separa los datos del código
+  → Es imposible inyectar SQL
+```
+
+---
+
+### Resumen Visual: Las Capas de Protección
 
 ```
                     🛡️ CAPAS DE DEFENSA
 ┌──────────────────────────────────────────────────┐
-│  Capa 1 — WAF (filtrado externo)                 │
+│  Capa 1 — WAF (detector de metales en la puerta)│
 │  ┌──────────────────────────────────────────────┐│
-│  │  Capa 2 — Validación de entrada              ││
+│  │  Capa 2 — Validación (guardia de seguridad)  ││
 │  │  ┌──────────────────────────────────────────┐││
-│  │  │  Capa 3 — Consultas parametrizadas       │││
+│  │  │  Capa 3 — Consultas Parametrizadas ⭐    │││
+│  │  │  (el mesero inteligente / la más          │││
+│  │  │   importante de todas)                    │││
 │  │  │  ┌──────────────────────────────────────┐│││
-│  │  │  │  Capa 4 — Mínimo privilegio en BD    ││││
-│  │  │  │  ┌──────────────────────────────────┐││││
-│  │  │  │  │  Capa 5 — Monitoreo y logging    │││││
-│  │  │  │  └──────────────────────────────────┘││││
+│  │  │  │  Capa 4 — Permisos Limitados en BD   ││││
 │  │  │  └──────────────────────────────────────┘│││
 │  │  └──────────────────────────────────────────┘││
 │  └──────────────────────────────────────────────┘│
 └──────────────────────────────────────────────────┘
 ```
 
-> **La seguridad es por capas.** Ninguna defensa individual es suficiente. Combiná múltiples capas para una protección real.
+> **La seguridad es por capas.** Ninguna defensa sola es suficiente. Pero si combinas varias, el atacante tendría que romper **todas** para lograr algo, y eso es prácticamente imposible.
+
+---
+
+---
+
+## 🎬 La Película Completa: Un Ataque vs Una Defensa (Paso a Paso)
+
+Para que quede cristalino, veamos la misma situación con y sin protección:
+
+### 🔴 Escenario SIN protección
+
+```
+1. El atacante llega a la página de login del banco.
+
+2. En el campo "Usuario" escribe:    admin' --
+   En el campo "Clave" escribe:      cualquiercosa
+
+3. El código del programador (el mesero tonto) arma la consulta
+   pegando directamente lo que el usuario escribió:
+
+   SELECT * FROM usuarios
+   WHERE nombre = 'admin' --' AND clave = 'cualquiercosa'
+                          ↑↑
+                          Los dos guiones COMENTAN todo lo que sigue.
+                          La verificación de la clave DESAPARECE.
+
+4. La base de datos ejecuta:
+   "Busca al usuario 'admin'" → Lo encuentra → Acceso concedido ☠️
+
+5. El atacante está adentro del banco como administrador.
+   Sin contraseña. En 5 segundos.
+```
+
+### 🟢 Escenario CON protección (consultas parametrizadas)
+
+```
+1. El atacante llega a la misma página de login.
+
+2. En el campo "Usuario" escribe:    admin' --
+   En el campo "Clave" escribe:      cualquiercosa
+
+3. El código del programador (el mesero inteligente) tiene una
+   orden PREIMPRESA con espacios en blanco:
+
+   SELECT * FROM usuarios
+   WHERE nombre = [___espacio 1___] AND clave = [___espacio 2___]
+
+   Y mete los datos del usuario EN LOS ESPACIOS, como texto puro:
+   Espacio 1 ← "admin' --"        (todo junto, como texto plano)
+   Espacio 2 ← "cualquiercosa"
+
+4. La base de datos ejecuta:
+   "Busca a alguien cuyo nombre sea literalmente: admin' -- "
+   → No encuentra a nadie con ese nombre tan raro → Acceso denegado ✅
+
+5. El atacante se queda afuera. La comilla y los guiones
+   NO se interpretaron como código. Son solo texto inocente.
+```
+
+---
+
+---
+
+## 🔒 Checklist: ¿Qué debe hacer una empresa para protegerse?
+
+- [ ] **Usar consultas parametrizadas** (la defensa #1 de todo el universo)
+- [ ] **Usar un ORM** cuando sea posible (genera SQL seguro automáticamente)
+- [ ] **Validar toda entrada** del usuario (verificar tipo, largo y formato)
+- [ ] **Dar permisos mínimos** a la cuenta de base de datos (solo lo necesario)
+- [ ] **No mostrar errores técnicos** al usuario (los errores revelan información)
+- [ ] **Mantener todo actualizado** (base de datos, frameworks, sistema operativo)
+- [ ] **Guardar contraseñas cifradas** (nunca en texto plano legible)
+- [ ] **Hacer auditorías de seguridad** periódicas
+
+---
+
+## ❌ Lo que un programador NUNCA debe hacer
+
+En español simple, el error mortal es: **pegar directamente lo que el usuario escribió dentro de la instrucción SQL**. Da igual el lenguaje de programación que uses.
+
+```
+❌ PROHIBIDO (en cualquier lenguaje):
+   "Toma lo que el usuario escribió y pégalo directamente en la consulta"
+   → Esto permite que el atacante cuele código malicioso.
+
+✅ CORRECTO (en cualquier lenguaje):
+   "Prepara la consulta con espacios en blanco.
+    Después, mete lo que el usuario escribió en esos espacios,
+    pero SOLO como datos, NUNCA como código."
+   → Esto hace que SQL Injection sea imposible.
+```
+
+> **Es así de simple.** Si el programador separa el código de los datos, el ataque **no funciona**.
+
+---
+
+---
+
+## 💀 Por qué esto importa (aunque no seas programador)
+
+Tal vez pienses _"Yo no programo, ¿por qué me importa?"_
+
+Porque tus datos están en bases de datos:
+
+- Tu cuenta bancaria está en una base de datos.
+- Tu historial médico está en una base de datos.
+- Tus fotos de Instagram están en una base de datos.
+- Tu nota de la universidad está en una base de datos.
+
+Si el programador que construyó esa aplicación **no protegió su código**, un atacante puede:
+
+- Ver tu saldo bancario.
+- Cambiar tu nota de un 4.0 a un 7.0 (o a un 1.0).
+- Leer tus mensajes privados.
+- Borrar tu cuenta completa.
+
+> **SQL Injection no es un tema de hackers con capucha en un sótano oscuro.** Es un error de programación que se comete todos los días y que afecta a personas reales. Por eso es tan importante que incluso los no-programadores entiendan qué es y cómo exigir que las aplicaciones que usan estén protegidas.
 
 ---
 
@@ -1609,11 +1447,12 @@ query = "SELECT * FROM users WHERE name = '%s'" % user_input
 
 > Estos entornos están **diseñados para ser hackeados** de forma legal y educativa:
 
-- **DVWA** (Damn Vulnerable Web Application) — App PHP vulnerable a propósito
+- **DVWA** (Damn Vulnerable Web Application) — App vulnerable a propósito
 - **SQLi-labs** — Laboratorio específico para practicar SQL Injection
 - **Hack The Box** — Plataforma de CTF con máquinas vulnerables
 - **TryHackMe** — Cursos guiados de ciberseguridad
 
 ---
 
-> **⚠️ Aviso Legal:** Este contenido es **exclusivamente educativo**. Realizar ataques de SQL Injection contra sistemas sin autorización explícita es **ilegal** y puede acarrear consecuencias penales. Siempre practicá en entornos controlados y con permiso.
+> **⚠️ Aviso Legal:** Este contenido es **exclusivamente educativo**. Realizar ataques de SQL Injection contra sistemas sin autorización explícita es **ilegal** y puede acarrear consecuencias penales. Siempre practica en entornos controlados y con permiso.
+
