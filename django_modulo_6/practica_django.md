@@ -3,7 +3,7 @@
 ### De cero a una app con Models, Views, URLs y Templates
 
 > Este documento es la guía práctica de la clase. Seguí cada paso en orden y sin saltear ninguno.
-> Antes de comenzar, asegurate de tener **Python 3.10+** instalado en tu computadora.
+> Antes de comenzar, asegurate de tener **Python 3.12+** instalado en tu computadora.
 
 ---
 
@@ -17,7 +17,7 @@ python3 --version
 python --version
 ```
 
-Si ves algo como `Python 3.11.4`, estás listo. Si no tenés Python instalado, descargalo desde [python.org](https://www.python.org/downloads/).
+Si ves algo como `Python 3.12.0`, estás listo. Si no tenés Python instalado, descargalo desde [python.org](https://www.python.org/downloads/).
 
 ---
 
@@ -85,7 +85,7 @@ pip install django
 python -m django --version
 ```
 
-Deberías ver algo como `5.1.6` o similar.
+Deberías ver algo como `6.0.1` o similar.
 
 ---
 
