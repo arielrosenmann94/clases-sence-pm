@@ -503,7 +503,3 @@ Django no existe solo. A su alrededor existe un ecosistema rico de paquetes que 
 ## 📚 Referencias
 
 - 📖 [Django Official Documentation](https://docs.djangoproject.com/en/)
-- 📖 [Django 5.0 Release Notes](https://docs.djangoproject.com/en/5.0/releases/5.0/)
-- 📖 [Django 5.1 Release Notes](https://docs.djangoproject.com/en/5.1/releases/5.1/)
-- 📖 [Django Roadmap (GitHub)](https://github.com/django/django/wiki/Roadmap)
-- 📖 [Two Scoops of Django](https://www.feldroy.com/books/two-scoops-of-django-3-x) — Libro de buenas prácticas
