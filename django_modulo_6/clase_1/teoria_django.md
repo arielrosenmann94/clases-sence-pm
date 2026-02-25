@@ -266,7 +266,7 @@ class Migration(migrations.Migration):
     ]
 ```
 
-> ⚠️ Nunca edites los archivos de migración a mano salvo que sepas exactamente lo que hacés. Están pensados para ser generados automáticamente.
+> ⚠️ Nunca edites los archivos de migración a mano salvo que sepas exactamente lo que haces. Están pensados para ser generados automáticamente.
 
 ### Comandos esenciales de migraciones
 
@@ -286,7 +286,7 @@ Django no aplica ningún cambio a la BD. Si intentás usar el nuevo campo o tabl
 
 ## 6. El Panel de Administración
 
-El panel `admin` es una de las características que distingue a Django de otros frameworks. Con solo dos líneas de código, tenés una interfaz web completa para gestionar todos tus datos.
+El panel `admin` es una de las características que distingue a Django de otros frameworks. Con solo dos líneas de código, tienes una interfaz web completa para gestionar todos tus datos.
 
 ### ¿Qué permite hacer el admin?
 

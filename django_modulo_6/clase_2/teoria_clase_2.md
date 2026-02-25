@@ -619,6 +619,7 @@ def buscar_producto(request):
         if form.is_valid():                  # Django valida los campos
             nombre = form.cleaned_data['nombre']   # dato limpio y seguro
             resultados = Producto.objects.filter(nombre__icontains=nombre)
+            #SELECT * FROM producto WHERE nombre LIKE '%nombre%';
     else:
         form = BusquedaForm()    # formulario vacío para mostrar al usuario
 
@@ -675,9 +676,161 @@ Renderiza todos los campos del formulario envueltos en etiquetas `<p>`. Django g
 
 ---
 
+## 7. Herencia de Templates — El sistema DRY de Django
+
+### El problema: código HTML repetido
+
+Hasta ahora, cada template del proyecto (`home.html`, `lista_productos.html`, `buscar.html`, `carrito.html`) tiene su propia estructura HTML completa: `<!DOCTYPE>`, `<head>`, estilos, `<body>`. Si se necesita cambiar el nombre del sitio o agregar un menú de navegación, hay que editar **todos** los archivos uno por uno.
+
+Esto viola el principio **DRY** (Don't Repeat Yourself — No te repitas), uno de los pilares de Django.
+
+---
+
+### La solución: `{% extends %}` y `{% block %}`
+
+Django permite crear un **template base** que contiene la estructura común (el HTML, el `<head>`, la navbar, el footer), y definir **bloques vacíos** que cada página hijo rellena con su propio contenido.
+
+```
+base.html (padre)
+├── HTML, head, navbar, footer  ← se escribe UNA sola vez
+├── {% block title %}           ← espacio reservado para el título
+└── {% block content %}         ← espacio reservado para el contenido
+
+lista_productos.html (hijo)
+├── {% extends "base.html" %}   ← hereda todo del padre
+├── {% block title %} Catálogo  ← rellena solo el título
+└── {% block content %} ...     ← rellena solo el contenido
+```
+
+---
+
+### Cómo funciona `{% extends %}`
+
+La etiqueta `{% extends "base.html" %}` **debe ser la primera línea** del template hijo. Le dice a Django: _"No generes tu propio HTML. Usa todo lo que tiene `base.html` y solo reemplaza los bloques que yo defina."_
+
+```html
+<!-- lista_productos.html -->
+{% extends "base.html" %} {% block title %}Catálogo{% endblock %} {% block
+content %}
+<h1>🛒 Catálogo de Productos</h1>
+<!-- ... contenido específico de esta página ... -->
+{% endblock %}
+```
+
+---
+
+### Cómo funciona `{% block %}`
+
+Un bloque es un **espacio con nombre** que el padre define y el hijo puede rellenar. Si el hijo no define un bloque, se usa el contenido por defecto del padre (si lo tiene).
+
+```html
+<!-- En base.html (padre) -->
+{% block title %}Mi Sitio{% endblock %}
+<!-- Si el hijo no define 'title', se muestra "Mi Sitio" -->
+```
+
+---
+
+### El template `base.html` — Ejemplo completo
+
+```html
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}CatálogoApp{% endblock %}</title>
+  </head>
+  <body>
+    <nav>
+      <a href="{% url 'home' %}">🏠 Inicio</a>
+      <a href="{% url 'lista_productos' %}">📦 Catálogo</a>
+      <a href="{% url 'ver_carrito' %}">� Carrito</a>
+
+      <form
+        action="{% url 'buscar_producto' %}"
+        method="GET"
+        style="margin-left: auto;"
+      >
+        <input type="text" name="q" placeholder="Buscar producto..." />
+        <button type="submit">🔍</button>
+      </form>
+    </nav>
+
+    <main>{% block content %}{% endblock %}</main>
+  </body>
+</html>
+```
+
+Observa que la navbar usa `{% url 'nombre' %}` en lugar de rutas fijas como `/productos/`. Esto garantiza que si las URLs cambian en `urls.py`, los links se actualizan automáticamente.
+
+---
+
+### Un template hijo que hereda
+
+```html
+<!-- productos/templates/lista_productos.html -->
+{% extends "base.html" %} {% block title %}Catálogo de Productos{% endblock %}
+{% block content %}
+<h1>🛒 Catálogo de Productos</h1>
+<ul>
+  {% for p in productos %}
+  <li>{{ p.nombre }} — ${{ p.precio_final }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+```
+
+Este archivo **no tiene** `<!DOCTYPE>`, `<head>`, ni `<nav>`. Todo eso lo hereda de `base.html`. Si mañana se necesita agregar un footer, se agrega una sola vez en `base.html` y todas las páginas lo muestran automáticamente.
+
+---
+
+### ¿Dónde se guarda `base.html`?
+
+El template base se coloca en una carpeta `templates/` en la **raíz del proyecto** (no dentro de ninguna app), porque es compartido por todas las aplicaciones.
+
+```text
+catalogoapp/
+├── config/
+├── core/
+├── productos/
+└── templates/        ← carpeta global de templates
+    └── base.html
+```
+
+Para que Django lo encuentre, hay que registrar esta carpeta en `settings.py`:
+
+```python
+TEMPLATES = [
+    {
+        'DIRS': [BASE_DIR / 'templates'],   # ← agregar esta línea
+        ...
+    },
+]
+```
+
+---
+
+### Diagrama completo de herencia
+
+```
+templates/base.html          (estructura HTML + navbar + footer)
+    │
+    ├── core/templates/home.html              (solo el contenido de inicio)
+    ├── productos/templates/lista_productos.html  (solo el catálogo)
+    ├── productos/templates/buscar.html           (solo el buscador)
+    └── productos/templates/carrito.html          (solo el carrito)
+```
+
+Cada página mantiene su identidad pero comparte la misma estructura visual. Un cambio en `base.html` se refleja instantáneamente en todas las páginas del sitio.
+
+---
+
 ## 📚 Referencias
 
 - 📖 [Django 6.0 — Documentación oficial](https://docs.djangoproject.com/en/6.0/)
 - 📖 [Django Forms — Documentación oficial](https://docs.djangoproject.com/en/6.0/topics/forms/)
+- 📖 [Django Templates — Herencia](https://docs.djangoproject.com/en/6.0/ref/templates/language/#template-inheritance)
 - 📖 [Django Design Philosophies](https://docs.djangoproject.com/en/6.0/misc/design-philosophies/)
 - 📖 [Django Security — Deployment Checklist](https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/)
