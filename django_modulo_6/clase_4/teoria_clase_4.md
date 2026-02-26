@@ -170,7 +170,7 @@ mi_proyecto/                    ← Raíz del proyecto
 │   │
 │   ├── css/                    ← 🎨 Hojas de estilo
 │   │   ├── base.css            ← Estilos globales del sitio
-│   │   └── productos.css       ← Estilos solo para la sección productos
+│   │   └── mi_app.css       ← Estilos solo para la sección productos
 │   │
 │   ├── js/                     ← ⚡ Archivos JavaScript
 │   │   ├── menu.js             ← Lógica del menú hamburguesa
@@ -495,7 +495,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),          # Panel de administración
-    path('', include('productos.urls')),       # Todo lo demás → app productos
+    path('productos/', include('productos.urls')),       # Todo lo demás → app productos
 ]
 ```
 
