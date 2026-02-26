@@ -241,135 +241,10 @@ Si ves algo como `p.precio_final`, revisa `models.py` para entender la lógica r
 
 > Este hábito te ayuda a pensar como programador/a, no solo a copiar código.
 
----
-
-## 6. Preguntas para pensar y discutir en clase
-
-Este bloque **no es una prueba para atraparte**.
-
-Es un entrenamiento para aprender a pensar como programador/a Django:
-
-- mirar el código antes de responder,
-- explicar con tus palabras,
-- justificar usando el flujo MVT,
-- y detectar en qué parte del proyecto está el problema.
-
-### Cómo trabajar estas preguntas (método simple)
-
-Antes de responder una pregunta, haz esto:
-
-1. Identifica de qué capa habla (URL, vista, modelo, template, settings, sesión).
-2. Piensa qué archivo tocarías si tuvieras que corregirlo.
-3. Responde en una frase simple.
-4. Si puedes, agrega un “porque...”.
-
-> No importa usar palabras perfectas. Importa que entiendas el flujo.
-
-### Recomendación de trabajo en clase
-
-- Primero responde individualmente las preguntas más fáciles.
-- Luego compáralas en pareja o grupo.
-- Después revisen el código real del proyecto y ajusten respuestas.
-
-### Nivel 1 — Ubicarte en el proyecto (más directas)
-
-Estas preguntas te ayudan a reconocer responsabilidades y flujo básico.
-
-#### A. Lectura de código (P1–P8)
-
-**P1.** ¿Qué archivo recibe primero una petición HTTP en Django: `models.py`, `views.py` o `urls.py`?
-
-**P2.** En una vista, ¿qué diferencia práctica hay entre `render()` y `redirect()`?
-
-**P3.** Si una vista hace `return render(request, 'buscar.html', {'resultados': resultados})`, ¿qué significa ese diccionario?
-
-**P4.** ¿Por qué conviene que `precio_final()` esté en `models.py` y no escrito directamente en el template?
-
-**P5.** ¿Qué problema resuelve `{% extends "base.html" %}`?
-
-**P6.** ¿Qué ventaja tiene usar `{% url 'lista_productos' %}` en vez de escribir `/productos/` manualmente?
-
-**P7.** ¿Qué hace `request.GET.get('q', '')` en una vista de búsqueda?
-
-**P8.** ¿Qué rol cumple `request.session` en el carrito de compras didáctico?
-
-### Nivel 2 — Entender decisiones de diseño (intermedio)
-
-Aquí ya no solo importa “qué archivo”, sino **por qué** esa decisión es mejor.
-
-#### B. Arquitectura y responsabilidades (P9–P15)
-
-**P9.** ¿Qué tipo de cosas deberían configurarse en `settings.py`?
-
-**P10.** Si quieres crear una página “Acerca de”, ¿en qué app la pondrías y por qué?
-
-**P11.** ¿Qué responsabilidad tiene `productos/urls.py` y qué cosa NO debería hacer?
-
-**P12.** ¿Qué significa “Fat Models, Thin Views” en una frase?
-
-**P13.** Si una vista empieza a tener muchos cálculos de negocio, ¿qué señal arquitectónica te está mostrando?
-
-**P14.** ¿Por qué un `Form` de Django es mejor que confiar solo en `<input>` HTML para validar datos?
-
-**P15.** ¿Qué ventaja aporta una carpeta global `templates/` para `base.html`?
-
-### Nivel 3 — Diagnóstico (debugging básico)
-
-Aquí la idea es pensar como alguien que depura:
-
-- ¿qué error veo?
-- ¿qué significa?
-- ¿dónde reviso primero?
-
-#### C. Debugging y diagnóstico (P16–P24)
-
-**P16.** Si aparece `TemplateDoesNotExist`, menciona al menos 2 cosas que revisarías primero.
-
-**P17.** Si aparece `NoReverseMatch`, ¿qué relación tiene ese error con `{% url %}` o `redirect()`?
-
-**P18.** Si modificas un modelo y luego aparece un error de base de datos, ¿qué comandos de Django recordarías revisar/ejecutar?
-
-**P19.** ¿Qué pasa si creas una app con `startapp` pero no la agregas a `INSTALLED_APPS`?
-
-**P20.** Si en un template una variable no se muestra, ¿qué revisarías en la vista?
-
-**P21.** ¿Por qué conviene probar una URL directamente en el navegador cuando estás depurando?
-
-**P22.** ¿Qué ventaja tiene `get_object_or_404(...)` frente a un `.get(...)` simple en vistas básicas?
-
-**P23.** ¿Qué diferencia hay entre un error de ruta (URL) y un error de template a nivel de “dónde buscar” el problema?
-
-**P24.** Si el carrito no muestra lo esperado, ¿qué archivos revisarías primero: modelo, vista, template, urls o sesión? Justifica.
-
-### Nivel 4 — Predicción y criterio (más desafiante)
-
-Estas preguntas te ayudan a anticipar problemas antes de que ocurran.
-
-#### D. Predicción y pensamiento de programador (P25–P30)
-
-**P25.** Si cambias el nombre de una ruta en `urls.py` pero no actualizas el template, ¿qué error podrías esperar?
-
-**P26.** Si cambias `base.html`, ¿qué páginas deberían verse afectadas y por qué?
-
-**P27.** ¿Qué parte del sistema decide qué datos llegan al template?
-
-**P28.** ¿Qué parte del sistema decide cómo se ven esos datos en pantalla?
-
-**P29.** ¿Qué aprendizaje de Clase 2 te parece más importante para mantener un proyecto cuando crece?
-
-**P30.** Explica en 4 pasos el flujo completo de una funcionalidad de Django usando un ejemplo del proyecto.
-
-### Cómo saber si vas bien
-
-Vas muy bien si puedes hacer estas tres cosas:
-
-- explicar qué hace una vista sin leerla línea por línea,
-- decir en qué archivo buscarías un error antes de tocar nada,
-- y conectar URL -> vista -> modelo -> template con un ejemplo real.
 
 ---
 
-## 7. Errores comunes (guía rápida)
+## 6. Errores comunes (guía rápida)
 
 | Error | Qué suele significar | Qué revisar primero |
 | --- | --- | --- |
@@ -381,7 +256,7 @@ Vas muy bien si puedes hacer estas tres cosas:
 
 ---
 
-## 8. Siguiente paso: práctica de consolidación
+## 7. Siguiente paso: práctica de consolidación
 
 Vamos a completar el proyecto con una funcionalidad nueva, todavía dentro del nivel básico:
 
