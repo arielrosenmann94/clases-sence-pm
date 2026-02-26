@@ -480,7 +480,7 @@ En esta clase recorriste el ciclo de Django **cinco veces**:
 
 Si completaste los cinco ejercicios, ya dominas el ciclo fundamental de desarrollo en Django.
 
- 6. Preguntas para pensar y discutir en clase
+# 6. Preguntas para pensar 
 
 Este bloque **no es una prueba para atraparte**.
 
