@@ -45,14 +45,14 @@ Completa cada campo con el valor que elegirías y, en los campos marcados con �
 
 ### Estructura
 
-| Decisión                       | Tu elección | 💬 Justificación |
-| ------------------------------ | ----------- | ---------------- |
-| Tipo de estructura             |             |                  |
-| Carpeta de configuración       |             |                  |
-| Carpeta de apps                |             |                  |
-| Ubicación de templates         |             |                  |
-| Settings separados por entorno |             |                  |
-| Requirements separados         |             |                  |
+| Decisión                                                        | Tu elección | 💬 Justificación |
+| --------------------------------------------------------------- | ----------- | ---------------- |
+| Tipo de estructura                                              |             |                  |
+| Carpeta de configuración _(¿cómo la llamas? ej: `config/`)_     |             |                  |
+| Carpeta de apps _(¿las agrupas? ej: `apps/` o directo en raíz)_ |             |                  |
+| Ubicación de templates                                          |             |                  |
+| Settings separados por entorno                                  |             |                  |
+| Requirements separados                                          |             |                  |
 
 ---
 
