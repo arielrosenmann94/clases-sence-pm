@@ -416,46 +416,7 @@ La página hija **no necesita** repetir ni el `<head>`, ni el `{% load static %}
 
 Además de tus archivos estáticos personalizados, existen librerías de CSS/JS como **Bootstrap** que puedes cargar desde un CDN (sin descargar nada) para obtener diseño responsivo rápidamente. Esto se hace agregando un `<link>` adicional en el `<head>` del `base.html`. Lo veremos en la práctica más adelante.
 
----
-
-### Contenido Dinámico: datos que cambian
-
-Además de los estáticos (que son iguales para todos), los templates pueden mostrar **datos que vienen de la vista**.
-
-La vista prepara un **Contexto** (un diccionario de Python) y lo manda al template:
-
-**En la vista (`views.py`):**
-
-```python
-def inicio_view(request):
-    contexto = {
-        'usuario': 'Juan',
-        'total_productos': 42,
-    }
-    return render(request, 'inicio.html', contexto)
-```
-
-**En el template:**
-
-```html
-<h1>¡Hola, {{ usuario }}!</h1>
-<p>Tenemos {{ total_productos }} productos esperándote.</p>
-```
-
-**El navegador muestra:**
-
-```text
-¡Hola, Juan!
-Tenemos 42 productos esperándote.
-```
-
-> 🔁 `{{ usuario }}` es un **espacio en blanco** que Django rellena justo antes de enviar la página. Si mañana entra María, verá "¡Hola, María!".
-
----
-
-> _"Cada herramienta que aprendes hoy te acerca más a construir lo que imaginas. ¡No pares!"_
-
----
+--
 
 ---
 
