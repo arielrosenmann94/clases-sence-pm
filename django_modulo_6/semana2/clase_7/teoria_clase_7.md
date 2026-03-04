@@ -280,6 +280,13 @@ Una página externa no puede conocer ese token, así que no puede falsificar el 
 </form>
 ```
 
+```html
+<form method="POST">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Enviar</button>
+</form>
+```
+
 Lo que genera `{% csrf_token %}` en el HTML final:
 
 ```html

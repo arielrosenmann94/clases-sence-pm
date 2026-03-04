@@ -1,6 +1,6 @@
-# 🐍 Django — Módulo 6 · Clase 7B
+# Django — Módulo 6 · Clase 8
 
-## Formularios en Django: Parte II — ModelForms y técnicas avanzadas
+## ModelForms, Widgets y Validaciones
 
 ---
 
@@ -24,12 +24,12 @@ Pero cuando el objetivo del formulario es **crear o editar un registro en la bas
 
 ## El principio
 
+> Definiste el modelo una vez. El `ModelForm` lo lee y genera el formulario solo. No hay que repetir cada campo — eso es el principio DRY aplicado a formularios.
+
 Un `ModelForm` lee la definición del modelo y genera el formulario automáticamente. Si el modelo tiene un campo `CharField(max_length=100)`, el formulario genera un `forms.CharField(max_length=100)` sin que haya que escribirlo.
 
 ```python
 # models.py
-from django.db import models
-
 class Producto(models.Model):
     nombre      = models.CharField(max_length=120)
     descripcion = models.TextField(blank=True)
@@ -50,15 +50,15 @@ class ProductoForm(forms.ModelForm):
     class Meta:
         model  = Producto
         fields = ['nombre', 'descripcion', 'precio', 'disponible']
-        # O para incluir todos los campos del modelo (con precaución):
-        # fields = '__all__'
-        # O para excluir campos específicos:
-        # exclude = ['creado']
+        # fields = '__all__'        ← todos los campos
+        # exclude = ['creado']      ← excluir campos específicos
 ```
 
 ---
 
 ## La diferencia clave: `form.save()`
+
+> En `forms.Form` los datos llegan limpios a la vista y el desarrollador decide qué hacer con ellos. En `ModelForm`, `save()` hace ese trabajo en una sola línea.
 
 El `ModelForm` tiene un método `save()` que no existe en `forms.Form`. Guarda el objeto en la base de datos directamente:
 
@@ -75,7 +75,7 @@ def crear_producto(request):
     return render(request, 'producto_form.html', {'form': form})
 ```
 
-Para **editar** un objeto existente, se pasa el `instance`:
+Para **editar** un objeto existente, se pasa `instance`. Django detecta que ya existe en la DB y hace un `UPDATE` en lugar de un `INSERT`.
 
 ```python
 def editar_producto(request, pk):
@@ -113,6 +113,8 @@ def editar_producto(request, pk):
 
 ## Qué es un widget
 
+> El widget es el HTML que produce el campo. El campo valida el dato; el widget decide cómo se ve. Se pueden usar por separado sin tocarse.
+
 Un **widget** es el componente HTML que Django usa para renderizar un campo. Por defecto:
 
 - `CharField` → `<input type="text">`
@@ -124,6 +126,8 @@ Los widgets se pueden sobreescribir para cambiar el HTML generado y agregar atri
 ---
 
 ## Personalizar widgets en un `ModelForm`
+
+> El dict `widgets` dentro de `class Meta` enlaza el nombre del campo con su widget. Ahí se agregan clases CSS, placeholders y atributos HTML sin tocar el template.
 
 ```python
 class ProductoForm(forms.ModelForm):
@@ -183,6 +187,8 @@ class ProductoForm(forms.ModelForm):
 
 ## Validación por campo: `clean_<nombre_del_campo>()`
 
+> Nombrar el método `clean_` seguido del nombre del campo le dice a Django que lo ejecute automáticamente al validar. Si lanza `ValidationError`, ese campo queda inaccesible en `cleaned_data`.
+
 Django llama a estos métodos automáticamente durante `is_valid()`. Si el método lanza un `ValidationError`, el campo queda inválido:
 
 ```python
@@ -215,6 +221,8 @@ class ProductoForm(forms.ModelForm):
 
 ## Validación cruzada entre campos: `clean()`
 
+> Si la regla depende de dos campos a la vez — como que la fecha de fin sea posterior a la de inicio — no hay un `clean_campo` correcto. El método `clean()` general es el lugar.
+
 Cuando la validación depende de más de un campo a la vez, se usa el método general `clean()`:
 
 ```python
@@ -246,6 +254,8 @@ El error generado en `clean()` aparece en `form.non_field_errors` (no está asoc
 ---
 
 ## El patrón PRG y los mensajes
+
+> Si el usuario recarga la página después de un POST sin redirect, el browser reenvía el formulario. El redirect corta ese ciclo. Pero ¿cómo avisar que todo salió bien si no hay contexto? Con mensajes flash.
 
 **PRG** = Post / Redirect / Get. Es el patrón estándar para procesar formularios:
 
@@ -444,7 +454,6 @@ urlpatterns = [
 
 ```html
 {% extends 'base.html' %} {% block content %}
-
 <div class="container my-5">
   <div class="row justify-content-center">
     <div class="col-md-7">
@@ -455,29 +464,22 @@ urlpatterns = [
         <div class="card-body">
           <form method="POST" novalidate>
             {% csrf_token %} {% for field in form %}
-            <div
-              class="mb-3 {% if field.field.widget.input_type == 'checkbox' %}form-check{% endif %}"
-            >
-              <label
-                for="{{ field.id_for_label }}"
-                class="{% if field.field.widget.input_type == 'checkbox' %}form-check-label{% else %}form-label{% endif %}"
+            <div class="mb-3">
+              <label for="{{ field.id_for_label }}" class="form-label"
+                >{{ field.label }}</label
               >
-                {{ field.label }}
-              </label>
               {{ field }} {% for error in field.errors %}
               <div class="text-danger small mt-1">{{ error }}</div>
               {% endfor %}
             </div>
             {% endfor %}
-
             <div class="d-flex gap-2 mt-4">
               <button type="submit" class="btn btn-primary">Guardar</button>
               <a
                 href="{% url 'tareas:lista_tareas' %}"
                 class="btn btn-outline-secondary"
+                >Cancelar</a
               >
-                Cancelar
-              </a>
             </div>
           </form>
         </div>
@@ -485,7 +487,6 @@ urlpatterns = [
     </div>
   </div>
 </div>
-
 {% endblock %}
 ```
 
