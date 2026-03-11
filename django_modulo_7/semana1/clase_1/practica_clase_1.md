@@ -29,6 +29,8 @@ Usuario:    student_readonly
 Contraseña: lectura123
 ```
 
+> ℹ️ **NOTA IMPORTANTE:** El usuario `student_readonly` tiene permiso **solo de lectura**. El panel de administración de Django te mostrará botones para "Añadir" o "Eliminar" (porque eres Superusuario de Django), pero si intentas guardar cambios, la base de datos te dará un error de permiso denegado. Esta práctica es solo para visualizar datos existentes.
+
 ---
 
 ---
@@ -188,7 +190,19 @@ Elige el nombre de usuario, email y contraseña que quieras.
 
 ---
 
-## Paso 7 — Iniciar el servidor y verificar
+## Paso 7 — Instalar dependencias
+
+Para que Django pueda hablar con una base de datos PostgreSQL, necesita un "traductor" o driver. El más común es `psycopg2`. Si no lo instalas, Django te dará un error al intentar conectar.
+
+Ejecuta este comando en tu terminal (dentro de tu entorno virtual):
+
+```bash
+pip install psycopg2-binary
+```
+
+---
+
+## Paso 8 — Iniciar el servidor y verificar
 
 Inicia el servidor de desarrollo y abre el panel de administración en el navegador:
 
@@ -211,3 +225,21 @@ La práctica está completa cuando puedes mostrar al profesor:
 - Al hacer clic en cualquier plato, se ven todos sus datos incluyendo los ingredientes
 
 No hay entrega de archivos. La validación es en pantalla.
+
+---
+
+## Solución de problemas comunes
+
+Si al entrar al Admin y hacer clic en un modelo ves un error, no te asustes. Generalmente es uno de estos dos:
+
+### 1. "Relation '...' does not exist"
+
+**Qué significa:** Django está buscando una tabla que no existe con ese nombre.
+**Solución:** Revisa el `db_table` dentro de la clase `Meta`. Debe ser exactamente igual al nombre de la tabla en Postgres (por ejemplo, `'menu_plato'`).
+
+### 2. "Column '...' does not exist"
+
+**Qué significa:** Django encontró la tabla, pero dentro de ella no hay una columna con el nombre que definiste en tu modelo.
+**Solución:** Revisa el nombre del atributo en tu clase. Django usa el nombre del atributo como nombre de columna. Por ejemplo, si definiste `desc = models.TextField()` pero en la base de datos la columna se llama `descripcion`, fallará.
+
+---
