@@ -148,52 +148,27 @@ Antes de tocar el teclado, lee estas historias de usuario. Representan lo que Do
 
 ---
 
-# 🎨 FASE 2 — Planificación de Frontend (ANTES de escribir CSS)
+# 🎨 FASE 2 — Identidad Visual del Proyecto
 
-## Plantilla de Diseño Visual
+Don Roberto contrató a un diseñador que definió la identidad visual de MartilloVirtualDjango. Debes usar estos elementos en tu implementación:
 
-Completa este archivo como `diseno_frontend.md`:
+### Paleta de Colores
 
-```markdown
-# Diseño Frontend — MartilloVirtualDjango
+| Color | Código HEX | Uso |
+| ----- | ---------- | --- |
+| Negro Ébano | `#1A1A2E` | Fondo principal, transmite elegancia y seriedad |
+| Dorado Antiguo | `#C9A84C` | Acentos, botones destacados, sensación de lujo |
+| Blanco Hueso | `#F5F0E8` | Texto sobre fondo oscuro, tarjetas, espacios limpios |
+| Borgoña | `#6B2D3E` | Alertas de urgencia, badges de "cerrando pronto" |
+| Gris Ceniza | `#8C8C8C` | Texto secundario, bordes sutiles, información de apoyo |
 
-## 1. Paleta de Colores
+### Tipografía (Google Fonts)
 
-<!-- Define 5 colores máximo. Justifica cada uno con un principio
-     de neuromarketing de la lista entregada -->
+- **Títulos:** `Playfair Display` — Serif elegante que evoca tradición y prestigio.
+- **Cuerpo:** `Inter` — Sans-serif moderna, altamente legible en pantallas.
 
-| Color | Código HEX | Uso | Principio Neuromarketing |
-| ----- | ---------- | --- | ------------------------ |
-|       |            |     |                          |
-
-## 2. Tipografía
-
-<!-- Elige 2 fuentes de Google Fonts.
-     Una para títulos, otra para cuerpo -->
-
-- Títulos:
-- Cuerpo:
-
-## 3. Efectos Visuales Obligatorios
-
-<!-- Marca con [x] los que vas a implementar. Mínimo 5. -->
-
-- [ ] Animación de entrada (fade-in / slide-in)
-- [ ] Efecto hover en tarjetas de producto
-- [ ] Contador regresivo animado para cierre de subasta
-- [ ] Efecto de "pulso" en el botón de ofertar
-- [ ] Transición suave entre páginas o secciones
-- [ ] Efecto parallax en el hero/banner
-- [ ] Micro-animación al confirmar una oferta exitosa
-- [ ] Glassmorphism en tarjetas o modales
-- [ ] Gradientes dinámicos en el header
-- [ ] Animación del precio subiendo en tiempo real
-- [ ] Efecto confetti o celebración al ganar una subasta
-
-## 4. Wireframe Rápido
-
-<!-- Dibuja a mano o describe la estructura de la página principal.
-     ¿Qué ve el usuario primero? ¿Dónde está el botón principal? -->
+```html
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 ```
 
 ---
@@ -210,17 +185,14 @@ Completa este archivo como `diseno_frontend.md`:
 4. **Botón "Ofertar" con efecto pulso** que atraiga la atención del ojo periférico.
 5. **Confirmación visual animada** cuando una oferta es aceptada (checkmark + color verde).
 6. **Diseño 100% responsivo** que funcione en celular, tablet y escritorio sin romper la experiencia.
-7. **Paleta de colores coherente** que transmita lujo, confianza y antigüedad.
-8. **Tipografía profesional** de Google Fonts (no usar fuentes por defecto del navegador).
-9. **Encuentra tus propios efectos WOW** 🤯 — Investiga, experimenta y agrega al menos 2 efectos visuales adicionales que NO estén en esta lista. Algo que cuando Don Roberto lo vea diga: _"Esto es exactamente lo que necesitaba."_ Sorprende al cliente.
+7. **Diseño moderno y actual** 🔥 — Aunque la temática es de antigüedades, la plataforma debe verse como si hubiera sido diseñada HOY. Nada de interfaces que parezcan de 2015. Usa técnicas actuales: glassmorphism, gradientes sutiles, micro-animaciones, sombras suaves y espaciado generoso.
+8. **Encuentra tus propios efectos WOW** 🤯 — Investiga, experimenta y agrega al menos 2 efectos visuales adicionales que NO estén en esta lista. Algo que cuando Don Roberto lo vea diga: _"Esto es exactamente lo que necesitaba."_ Sorprende al cliente.
 
 ---
 
 # 🚀 ¡Manos a la obra!
 
 1. Lee las 8 historias de usuario completas.
-2. Crea el archivo `diseno_frontend.md` y completa la plantilla visual.
-3. Muéstrale el documento al profesor antes de escribir la primera línea de código.
-4. Construye los modelos, las migraciones, y las vistas.
-5. Aplica los principios de neuromarketing del Anexo en tu interfaz.
-6. Prueba. Itera. Sorprende.
+2. Construye los modelos, las migraciones, y las vistas.
+3. Implementa la identidad visual entregada en la Fase 2.
+4. Prueba. Itera. Sorprende.
