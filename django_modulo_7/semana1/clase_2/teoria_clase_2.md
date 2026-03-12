@@ -73,7 +73,7 @@ Para que Django pueda importar los modelos como si nada hubiera cambiado, el arc
 from .categoria import Categoria
 from .alergeno import Alergeno
 from .ingrediente import Ingrediente
-from .plato import Plato
+from .plato import PlatoBase, PlatoVegano, PlatoPremium, PlatoEstandar
 ```
 
 Con esto, cualquier import existente en el proyecto sigue funcionando sin cambios:
