@@ -100,7 +100,7 @@ menu/
 
 ## Paso 5 — Los 15 modelos a implementar
 
-Debes implementar los siguientes 15 modelos. Cada uno vive en su propio archivo. La descripción es intencional: el código lo escribes tú, no se entrega el modelo hecho. Si flatan campos los debes agregar.
+Debes implementar los siguientes 15 modelos. Cada uno vive en su propio archivo. La descripción es intencional: el código lo escribes tú, no se entrega el modelo hecho. `Si flatan campos los debes agregar.`
 
 | #   | Archivo               | Modelo             | Descripción breve                                                      |
 | --- | --------------------- | ------------------ | ----------------------------------------------------------------------- |
