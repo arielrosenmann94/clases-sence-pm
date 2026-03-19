@@ -74,9 +74,9 @@ Casos reales donde el rollback salva el proyecto:
 | Situación                                                | Consecuencia sin rollback                        | Con rollback                             |
 | :------------------------------------------------------- | :----------------------------------------------- | :--------------------------------------- |
 | Eliminaste un campo con datos importantes                | Pérdida de datos en producción                   | Vuelves al estado previo en segundos      |
-| Aplicaste una migración antes de hora (error de deploy)  | Sistema inconsistente entre servidores           | Revertís y sincronizas                   |
-| Una migración fue mal diseñada (campo con tipo incorrecto) | Debes hacer parches encima de parches           | Revertís y corriges el diseño original   |
-| Error de lógica en una migración de datos                | Datos corruptos en producción                    | Revertís antes de que impacte a usuarios |
+| Aplicaste una migración antes de hora (error de deploy)  | Sistema inconsistente entre servidores           | Reviertes y sincronizas                   |
+| Una migración fue mal diseñada (campo con tipo incorrecto) | Debes hacer parches encima de parches           | Reviertes y corriges el diseño original   |
+| Error de lógica en una migración de datos                | Datos corruptos en producción                    | Reviertes antes de que impacte a usuarios |
 
 ---
 

@@ -269,6 +269,8 @@ def process_file(filepath):
         (r'\bcomprobás\b', 'compruebas'),
         (r'\bdecostrás\b', 'destruyes'),
         (r'\binsertar\b', 'insertar'),
+        (r'\bpostulás\b', 'postulas'),
+        (r'\bcrecés\b', 'creces'),
 
         # ── Imperativos (voseo → tuteo) ──
 
@@ -347,6 +349,7 @@ def process_file(filepath):
         (r'\bapagá\b', 'apaga'),
         (r'\bmandá\b', 'envía'),
         (r'\bobtenés\b', 'obtienes'),
+        (r'\brevertí\b', 'reviertes'),
 
         # ── Mayúsculas ──
         (r'\bDefinís\b', 'Defines'),
@@ -497,8 +500,15 @@ def process_file(filepath):
         (r'\bContestás\b', 'Contestas'),
         (r'\bSumás\b', 'Sumas'),
         (r'\bRestás\b', 'Restas'),
+        (r'\bPostulás\b', 'Postulas'),
+        (r'\bCrecés\b', 'Creces'),
+        (r'\bRevertí\b', 'Reviertes'),
+        (r'\bRevertís\b', 'Reviertes'),
+        (r'\brevertís\b', 'reviertes'),
 
         # ── Modismos, regionalismos y expresiones coloquiales ──
+        (r'\bsos\b', 'eres'),
+        (r'\bSos\b', 'Eres'),
         (r'\bacá\b', 'aquí'),
         (r'\bAcá\b', 'Aquí'),
         (r'\bACÁ\b', 'AQUÍ'),
@@ -509,6 +519,19 @@ def process_file(filepath):
         (r'\btipear\b', 'escribir'),
         (r'\btipeando\b', 'escribiendo'),
         (r'\btypeando\b', 'escribiendo'),
+        (r'\bcon vos\b', 'contigo'),
+        (r'\bcon tú\b', 'contigo'),
+        (r'\bcontactame\b', 'contáctame'),
+        (r'\bcomentame\b', 'coméntame'),
+        (r'\bayudame\b', 'ayúdame'),
+        (r'\benvianos\b', 'envíanos'),
+        (r'\bmandanos\b', 'envíanos'),
+        (r'\benviame\b', 'envíame'),
+        (r'\bmandame\b', 'envíame'),
+        (r'\bmandálo\b', 'envíalo'),
+        (r'\bmandalo\b', 'envíalo'),
+        (r'\bcontame\b', 'cuéntame'),
+        (r'\bcomunicate\b', 'comunícate'),
     ]
 
     new_content = content
