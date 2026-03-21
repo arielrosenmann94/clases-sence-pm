@@ -1271,9 +1271,12 @@ tu_proyecto/
 SECRET_KEY=django-insecure-clave-local-de-desarrollo
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
-DB_NAME=mi_base_datos
-DB_USER=mi_usuario
-DB_PASSWORD=mi_password
+
+DB_POSTGRES_NAME=mi_base_datos_postgres
+DB_POSTGRES_USER=mi_usuario_postgres
+DB_POSTGRES_PASSWORD=mi_password_postgres
+
+
 ```
 
 ### `.env.example` (plantilla para el equipo)
