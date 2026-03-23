@@ -659,23 +659,24 @@ urlpatterns = [
 from django.urls import path
 from . import views
 
-app_name = 'clientes'  # ← Namespace para evitar colisiones
+app_name = 'cli'  # ← Namespace para evitar colisiones
 
 urlpatterns = [
     # Listar todos los clientes
     path('', views.ClienteListView.as_view(), name='lista'),
-
+    misitioweb.com/clientes/
     # Ver detalle de un cliente
     path('<int:pk>/', views.ClienteDetailView.as_view(), name='detalle'),
-    misitioweb.com/clientes/1
+    misitioweb.com/clientes/122
     # Crear un nuevo cliente
     path('nuevo/', views.ClienteCreateView.as_view(), name='crear'),
-
+    misitioweb.com/clientes/nuevo
     # Editar un cliente existente
     path('editar/<int:pk>/', views.ClienteUpdateView.as_view(), name='editar'),
-
+    misitioweb.com/clientes/editar/122
     # Eliminar un cliente
     path('eliminar/<int:pk>/', views.ClienteDeleteView.as_view(), name='eliminar'),
+    misitioweb.com/clientes/eliminar/122
 ]
 ```
 
@@ -711,16 +712,16 @@ URL: /clientes/editar/5/
 <!-- En vez de escribir URLs a mano, usamos el tag url -->
 
 <!-- Link a la lista -->
-<a href="{% url 'clientes:lista' %}">Ver todos los clientes</a>
+<a href="{% url 'cli:lista' %}">Ver todos los clientes</a>
 
 <!-- Link al detalle del cliente con pk=5 -->
-<a href="{% url 'clientes:detalle' cliente.pk %}">Ver detalle</a>
+<a href="{% url 'cli:detalle' cliente.pk %}">Ver detalle</a>
 
 <!-- Link para editar -->
-<a href="{% url 'clientes:editar' cliente.pk %}">Editar</a>
+<a href="{% url 'cli:editar' cliente.pk %}">Editar</a>
 
 <!-- Link para eliminar -->
-<a href="{% url 'clientes:eliminar' cliente.pk %}">Eliminar</a>
+<a href="{% url 'cli:eliminar' cliente.pk %}">Eliminar</a>
 ```
 
 > 💡 **Ventaja de usar nombres:** Si cambias la URL de `/editar/` a `/modificar/`, solo cambias el `urls.py`. Todos los templates se actualizan automáticamente porque usan el **nombre**, no la URL literal.
