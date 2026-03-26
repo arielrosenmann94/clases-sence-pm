@@ -11,7 +11,7 @@
 ## ¿Qué vas a aprender hoy?
 
 - 🌐 Cómo hacer **deploy** de un proyecto Django en **Render + Supabase**
-- 🔗 Cómo conectar un **dominio personalizado** usando Cloud DNS
+- 🔗 Cómo conectar un **dominio personalizado** usando Cloudflare
 - 🔒 Configuración de seguridad avanzada — settings divididos en base / local / producción
 - ⚙️ Gestión de variables de entorno, bases de datos remotas y archivos estáticos
 
