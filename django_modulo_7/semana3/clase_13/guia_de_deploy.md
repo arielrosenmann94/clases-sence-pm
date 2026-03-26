@@ -466,40 +466,26 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mi_proyecto.settings.local')
 
 ---
 
-#### Archivos `.env` por entorno
+### 1.5 Crear un **ÚNICO** archivo `.env` para desarrollo local
+
+En tu computador (desarrollo local), vas a crear **un único archivo** llamado exactamente `.env` en la raíz de tu proyecto (al mismo nivel que `manage.py`).
+
+Este archivo **NUNCA** se sube a GitHub porque contiene tus claves secretas. En producción (Render), no se usa un archivo `.env`, sino que las variables se cargan directamente en el panel de control (lo veremos en el Paso 3.3).
 
 ```bash
-# .env (desarrollo local — NO subir a Git)
+# .env (archivo local — NO subir a Git)
 DJANGO_SETTINGS_MODULE=mi_proyecto.settings.local
-SECRET_KEY=clave-de-desarrollo-puede-ser-simple
-DEBUG=True
-```
-
-```
-Variables en Render (producción):
-──────────────────────────────────
-
-DJANGO_SETTINGS_MODULE  →  mi_proyecto.settings.production
-SECRET_KEY              →  [clave generada con get_random_secret_key()]
-DEBUG                   →  False
-ALLOWED_HOSTS           →  cuatro-patas.onrender.com
-DATABASE_URL            →  postgresql://postgres.abc...@supabase.com/postgres
-PYTHON_VERSION          →  3.12.3
-```
-
-### 1.5 Crear el archivo `.env` para desarrollo local
-
-```bash
-# .env (NO subir a Git — agregar a .gitignore)
-SECRET_KEY=tu-clave-secreta-de-desarrollo
+SECRET_KEY=tu-clave-secreta-de-desarrollo-super-segura
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 ```
 
-### 1.6 Actualizar `.gitignore`
+### 1.6 Proteger el archivo en `.gitignore`
+
+Para asegurarnos de que el `.env` jamás llegue a tu repositorio público, agrégalo a tu `.gitignore` antes de hacer el próximo commit:
 
 ```
-# .gitignore — agregar estas líneas
+# .gitignore — agregar estas líneas al final del archivo
 .env
 db.sqlite3
 staticfiles/
@@ -594,18 +580,19 @@ Completar el formulario:
 │  Branch:           main                              │
 │  Runtime:          Python 3                          │
 │                                                      │
-│  Build Command:    ./build.sh                        │
-│  Start Command:    gunicorn mi_proyecto.wsgi         │
-│                    └── reemplazar "mi_proyecto"      │
-│                        con el nombre de tu proyecto  │
-│                        (la carpeta que tiene wsgi.py)│
+│  Build Command:    bash build.sh                     │
+│  Start Command:    gunicorn config.wsgi:application  │
+│                    └── asume que tu carpeta base se  │
+│                        llama "config"                │
 │                                                      │
 │  Instance Type:    Free                              │
 │                                                      │
 └──────────────────────────────────────────────────────┘
 ```
 
-> ⚠️ **El Start Command es crítico.** El valor `mi_proyecto` debe coincidir con el nombre de la carpeta que contiene `wsgi.py`. Si el proyecto se llama `clinica_config`, el comando es `gunicorn clinica_config.wsgi`.
+> ⚠️ **Cuidado con el Build Command por defecto.** A veces Render detecta mal el proyecto y pone por defecto `mix phx.digest` (que es de Elixir/Phoenix). **Debes borrar eso** y escribir exactamente `bash build.sh`.
+>
+> ⚠️ **El Start Command es crítico.** El valor `config` debe coincidir con el nombre de la carpeta que contiene `wsgi.py`. Si tu proyecto se llama de otra forma, ajusta el comando (ej: `gunicorn mi_proyecto.wsgi:application`).
 
 ### 3.3 Variables de entorno
 
