@@ -12,7 +12,6 @@
 
 ---
 
-> [!CAUTION]
 > 🔴 **NOTA MUY IMPORTANTE — LEER ANTES DE CONTINUAR**
 >
 > **Este mismo trabajo integrador debe ser subido TANTO en el ABP 8 como en el ABP 9.**
@@ -21,12 +20,39 @@
 
 ---
 
+## 📦 Entregable — Lo que Debes Subir
+
+> ⚠️ **Cada estudiante debe entregar los siguientes 4 elementos. Sin excepción, todos deben estar presentes para que la entrega se considere completa.**
+
+| #   | Entregable                                  | Formato    | Detalle                                                                                                                                                                    |
+| --- | ------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Currículum Vitae**                        | PDF o Link | CV actualizado y adaptado a la vacante de **NexaBridge Solutions**. Debe reflejar tu perfil real.                                                                          |
+| 2   | **Portafolio de Proyectos**                 | PDF o Link | Documento con **mínimo 3 proyectos** desarrollados durante el curso, cada uno con descripción clara.                                                                       |
+| 3   | **Caso de Estudio**                         | PDF o Link | Desarrollo completo del caso de estudio seleccionado, cubriendo los 8 puntos del Requerimiento 1.3.                                                                        |
+| 4   | **Perfil Profesional o enlace de LinkedIn** | PDF o Link | Si tienes LinkedIn actualizado, comparte el **enlace directo**. Si no, entrega un PDF con todo el contenido profesional preparado (título, extracto, experiencia, imagen). |
+
+> 🚨 **Sobre los enlaces:**
+>
+> - Puedes entregar todo en **un solo PDF** que contenga los 4 elementos, o archivos separados.
+> - Si entregas un **enlace al portafolio**, este debe abrir **directamente** la vista del portafolio listo para ser revisado por un reclutador.
+> - Si entregas un **enlace al caso de estudio**, debe abrir **directamente** el caso de estudio desarrollado.
+> - **No se aceptan enlaces a repositorios de GitHub** ni a carpetas con código fuente. El portafolio debe estar **listo para que lo vea un reclutador de Recursos Humanos**, no una persona experta en código.
+> - Todo enlace entregado debe ir incluido dentro del PDF de entrega.
+
+> 📋 **Checklist rápido antes de entregar:**
+>
+> - [ ] ¿Mi CV está en formato PDF y adaptado a la vacante?
+> - [ ] ¿Mi portafolio incluye al menos 3 proyectos con descripciones?
+> - [ ] ¿Mi caso de estudio cubre los 8 puntos de la tabla?
+> - [ ] ¿Incluí mi perfil profesional (PDF o link de LinkedIn)?
+> - [ ] ¿Los enlaces que incluí abren directamente el contenido listo para ver?
+> - [ ] ¿Subí el trabajo **tanto en ABP 8 como en ABP 9**?
+
+---
+
 ## 🎯 ¿De qué se trata este proyecto?
 
-Una empresa ficticia del ecosistema tecnológico, **NexaBridge Solutions**, se ha interesado en tu perfil y desea avanzar con un proceso de selección. Para conocerte mejor como profesional en formación, te solicitan **dos entregables clave**:
-
-1. **Un fragmento de tu portafolio técnico** — donde muestres tu mejor trabajo.
-2. **Una presentación profesional optimizada** — donde proyectes quién eres y qué puedes aportar.
+Una empresa ficticia del ecosistema tecnológico, **NexaBridge Solutions**, se ha interesado en tu perfil y desea avanzar con un proceso de selección. Para conocerte mejor como profesional en formación, te solicitan tu documentación profesional completa.
 
 Este proyecto integra los contenidos de dos módulos:
 
@@ -35,7 +61,7 @@ Este proyecto integra los contenidos de dos módulos:
 
 > 📊 **Dato:** Según un estudio de Jobvite (2023), el 87% de los reclutadores del sector tecnológico revisan el perfil de LinkedIn de los candidatos antes de agendar una entrevista. Contar con un perfil profesional bien trabajado marca una diferencia significativa.
 >
-> **Fuente:** Jobvite, *Recruiter Nation Survey 2023*
+> **Fuente:** Jobvite, _Recruiter Nation Survey 2023_
 
 ---
 
@@ -76,12 +102,11 @@ Antes de agendar la entrevista, el equipo de selección de **NexaBridge Solution
 - ✅ **Portafolio de proyectos** con tus trabajos más representativos.
 - ✅ **Perfil profesional digital** (tipo LinkedIn) con información relevante para el sector IT.
 
-> [!NOTE]
-> **Sobre LinkedIn:** En esta parte del proyecto vas a **preparar y redactar** el contenido que llevaría un perfil profesional tipo LinkedIn. **No es obligatorio que lo publiques** en la plataforma si no lo deseas. Puedes presentar todo el contenido en un documento. Si ya tienes LinkedIn y quieres aprovecharlo, ¡excelente! Pero lo que se evalúa es **la calidad del contenido que preparas**, no que lo subas a la plataforma.
+> 💡 **Sobre LinkedIn:** En esta parte del proyecto vas a **preparar y redactar** el contenido que llevaría un perfil profesional tipo LinkedIn. **No es obligatorio que lo publiques** en la plataforma si no lo deseas. Puedes presentar todo el contenido en un documento. Si ya tienes LinkedIn y quieres aprovecharlo, ¡excelente! Pero lo que se evalúa es **la calidad del contenido que preparas**, no que lo subas a la plataforma.
 
 > 📊 **Dato:** El 63% de los responsables de contratación en tecnología descarta candidatos cuyo CV no está alineado con la descripción del puesto al que postulan.
 >
-> **Fuente:** Harvard Business Review, *"Why Your Resume Gets Rejected"* (2022)
+> **Fuente:** Harvard Business Review, _"Why Your Resume Gets Rejected"_ (2022)
 
 ---
 
@@ -130,20 +155,20 @@ Elige **una actividad o desafío específico** en el que hayas trabajado durante
 
 Dentro de tu portafolio, crea una **sección diferenciada y con nombre propio** donde desarrolles tu caso de estudio. Esta sección debe cubrir los siguientes puntos:
 
-| #   | Punto a Desarrollar                      | ¿Qué significa?                                                                                                        |
-| --- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| 1   | Breve descripción de la actividad        | Explica de qué se trataba el proyecto o tarea en 2-3 oraciones.                                                         |
-| 2   | Desafío principal                        | ¿Cuál fue el obstáculo más grande o interesante que enfrentaste?                                                        |
-| 3   | Solución propuesta                       | ¿Cómo lo resolviste? ¿Qué enfoque o estrategia elegiste?                                                               |
-| 4   | Herramienta técnica utilizada            | ¿Qué lenguajes, frameworks, plataformas o herramientas usaste?                                                         |
-| 5   | Principales aprendizajes                 | ¿Qué te llevaste de esta experiencia? ¿Qué harías diferente hoy?                                                       |
-| 6   | Métricas de impacto                      | Datos concretos: tiempo de resolución, mejoras funcionales, eficiencia lograda, cobertura alcanzada, etc.               |
-| 7   | Habilidades técnicas aplicadas           | Lista las competencias que pusiste en práctica (ej: SQL, Python, trabajo en equipo, metodologías ágiles, etc.).         |
-| 8   | Justificación de la elección             | ¿Por qué este proyecto y no otro? ¿Qué lo hace representativo de tu crecimiento?                                       |
+| #   | Punto a Desarrollar               | ¿Qué significa?                                                                                                 |
+| --- | --------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 1   | Breve descripción de la actividad | Explica de qué se trataba el proyecto o tarea en 2-3 oraciones.                                                 |
+| 2   | Desafío principal                 | ¿Cuál fue el obstáculo más grande o interesante que enfrentaste?                                                |
+| 3   | Solución propuesta                | ¿Cómo lo resolviste? ¿Qué enfoque o estrategia elegiste?                                                        |
+| 4   | Herramienta técnica utilizada     | ¿Qué lenguajes, frameworks, plataformas o herramientas usaste?                                                  |
+| 5   | Principales aprendizajes          | ¿Qué te llevaste de esta experiencia? ¿Qué harías diferente hoy?                                                |
+| 6   | Métricas de impacto               | Datos concretos: tiempo de resolución, mejoras funcionales, eficiencia lograda, cobertura alcanzada, etc.       |
+| 7   | Habilidades técnicas aplicadas    | Lista las competencias que pusiste en práctica (ej: SQL, Python, trabajo en equipo, metodologías ágiles, etc.). |
+| 8   | Justificación de la elección      | ¿Por qué este proyecto y no otro? ¿Qué lo hace representativo de tu crecimiento?                                |
 
 > 📊 **Dato:** Un portafolio con casos de estudio bien documentados puede aumentar en un 40% las probabilidades de pasar a una segunda ronda de entrevista, según datos internos de empresas de reclutamiento como Hired.com.
 >
-> **Fuente:** Hired, *State of Tech Salaries Report* (2023)
+> **Fuente:** Hired, _State of Tech Salaries Report_ (2023)
 
 **Lo que se va a revisar:**
 
@@ -158,8 +183,7 @@ Dentro de tu portafolio, crea una **sección diferenciada y con nombre propio** 
 
 **🎯 Objetivo:** Fortalecer tu perfil profesional digital, preparando el contenido necesario para una presencia efectiva en redes laborales y una presentación personal clara, breve y atractiva.
 
-> [!IMPORTANT]
-> **Aclaración:** Los siguientes requerimientos te piden **preparar contenido profesional** de calidad. Puedes elegir aplicarlo directamente en LinkedIn o presentarlo en un documento dentro de tu entrega. **No se te obliga a publicar en ninguna red social.** Lo importante es que demuestres que sabes construir un perfil profesional sólido.
+> ⚠️ **Aclaración:** Los siguientes requerimientos te piden **preparar contenido profesional** de calidad. Puedes elegir aplicarlo directamente en LinkedIn o presentarlo en un documento dentro de tu entrega. **No se te obliga a publicar en ninguna red social.** Lo importante es que demuestres que sabes construir un perfil profesional sólido.
 
 ---
 
@@ -180,14 +204,14 @@ Redacta un **título profesional claro y coherente** con tu perfil actual, como 
 
 Redacta un **extracto profesional** como el que se usa en la sección "Acerca de" de LinkedIn. Debe estar organizado en **4 a 6 párrafos breves** que cubran los siguientes aspectos:
 
-| #   | Aspecto                    | ¿Qué incluir?                                                                         |
-| --- | -------------------------- | -------------------------------------------------------------------------------------- |
-| 1   | Presentación inicial       | Quién eres, en qué te estás formando o qué estás aprendiendo actualmente.              |
-| 2   | Propósito profesional      | Hacia dónde te gustaría proyectarte dentro de la industria IT.                         |
-| 3   | Proyectos destacados       | Menciona brevemente 1-2 proyectos en los que hayas participado y qué rol tuviste.      |
-| 4   | Herramientas y lenguajes   | Detalla las tecnologías que manejas (aunque sea en nivel inicial/intermedio).           |
-| 5   | Forma de trabajar          | Tus fortalezas como profesional: trabajo en equipo, resolución de problemas, etc.      |
-| 6   | Cierre con proyección      | Qué tipo de oportunidades estás buscando o te interesan a futuro.                      |
+| #   | Aspecto                  | ¿Qué incluir?                                                                     |
+| --- | ------------------------ | --------------------------------------------------------------------------------- |
+| 1   | Presentación inicial     | Quién eres, en qué te estás formando o qué estás aprendiendo actualmente.         |
+| 2   | Propósito profesional    | Hacia dónde te gustaría proyectarte dentro de la industria IT.                    |
+| 3   | Proyectos destacados     | Menciona brevemente 1-2 proyectos en los que hayas participado y qué rol tuviste. |
+| 4   | Herramientas y lenguajes | Detalla las tecnologías que manejas (aunque sea en nivel inicial/intermedio).     |
+| 5   | Forma de trabajar        | Tus fortalezas como profesional: trabajo en equipo, resolución de problemas, etc. |
+| 6   | Cierre con proyección    | Qué tipo de oportunidades estás buscando o te interesan a futuro.                 |
 
 > 💡 **Consejo:** Escribe en primera persona con un tono cercano pero profesional. Es tu oportunidad de contar tu historia en tus propias palabras. Evita copiar y pegar textos genéricos.
 
@@ -221,7 +245,7 @@ Si decides optimizar tu perfil en LinkedIn u otra plataforma profesional, se rec
 
 > 📊 **Dato:** Los perfiles de LinkedIn con foto reciben hasta 21 veces más visualizaciones y 36 veces más mensajes que los perfiles sin foto.
 >
-> **Fuente:** LinkedIn, *Official Blog — Profile Tips* (2023)
+> **Fuente:** LinkedIn, _Official Blog — Profile Tips_ (2023)
 
 **Lo que se va a revisar:**
 
@@ -229,20 +253,6 @@ Si decides optimizar tu perfil en LinkedIn u otra plataforma profesional, se rec
 - Que el banner propuesto o utilizado sea coherente con el perfil técnico.
 
 ---
-
----
-
-# ✅ Entregables Finales
-
-## ¿Qué debes entregar?
-
-Un **documento en PDF, Google Doc o Google Slide** que incluya:
-
-| #   | Entregable                               | Detalle                                                                                                      |
-| --- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| 1   | Portada                                  | Nombre del proyecto, etapa, y tu nombre completo.                                                            |
-| 2   | Enlace al portafolio                     | Link a la herramienta donde alojaste tu portafolio, con el caso de estudio visible y desarrollado.           |
-| 3   | Perfil profesional + evidencia           | Comparte el contenido de tu perfil profesional (link de LinkedIn con captura, o documento con el contenido preparado) y un breve texto describiendo qué elementos trabajaste y por qué. |
 
 ---
 
@@ -265,10 +275,10 @@ Con este trabajo práctico integrador se valida tu capacidad para **combinar com
 ## 📖 Libros recomendados
 
 - **"El método Lean Startup"** — Eric Ries. Para entender la mentalidad ágil en IT y cómo presentar ideas de forma estructurada.
-  - *Fuente: Editorial Crown Business, 2011*
+  - _Fuente: Editorial Crown Business, 2011_
 
 - **"What Color Is Your Parachute?"** — Richard N. Bolles. Guía clásica sobre búsqueda de empleo, autoconocimiento profesional y preparación para entrevistas.
-  - *Fuente: Editorial Ten Speed Press, actualización anual*
+  - _Fuente: Editorial Ten Speed Press, actualización anual_
 
 ## 📰 Artículos
 
@@ -292,34 +302,10 @@ Lo que realices para este trabajo práctico es esencial para comenzar tu búsque
 
 > 📊 **Dato:** El 76% de los profesionales de recursos humanos considera que un portafolio actualizado demuestra mayor compromiso profesional que uno estático con proyectos desactualizados.
 >
-> **Fuente:** Stack Overflow, *Developer Survey 2023*
+> **Fuente:** Stack Overflow, _Developer Survey 2023_
 
 ---
 
-## 📦 Entregable Concreto — Lo que Debes Subir
-
-> [!IMPORTANT]
-> **Cada estudiante debe entregar los siguientes 4 archivos o enlaces. Sin excepción, todos deben estar presentes en la entrega para que esta se considere completa.**
-
-| #   | Archivo / Entregable                          | Formato               | Detalle                                                                                                 |
-| --- | --------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------- |
-| 1   | **Currículum Vitae**                          | PDF                   | CV actualizado y adaptado a la vacante de **NexaBridge Solutions**. Debe reflejar tu perfil real.        |
-| 2   | **Portafolio de Proyectos**                   | PDF                   | Documento con **mínimo 3 proyectos** desarrollados durante el curso, cada uno con descripción clara.     |
-| 3   | **Caso de Estudio**                           | PDF                   | Desarrollo completo del caso de estudio seleccionado, cubriendo los 8 puntos del Requerimiento 1.3.     |
-| 4   | **Perfil Profesional o enlace de LinkedIn**   | PDF o Link            | Si tienes LinkedIn actualizado, comparte el **enlace directo**. Si no, entrega un PDF con todo el contenido profesional preparado (título, extracto, experiencia, imagen). |
-
-> [!TIP]
-> 📋 **Checklist rápido antes de entregar:**
->
-> - [ ] ¿Mi CV está en formato PDF y adaptado a la vacante?
-> - [ ] ¿Mi portafolio incluye al menos 3 proyectos con descripciones?
-> - [ ] ¿Mi caso de estudio cubre los 8 puntos de la tabla?
-> - [ ] ¿Incluí mi perfil profesional (PDF o link de LinkedIn)?
-> - [ ] ¿Subí el trabajo **tanto en ABP 8 como en ABP 9**?
-
----
-
-> [!CAUTION]
 > 🔴 **RECORDATORIO FINAL**
 >
 > **Este mismo trabajo integrador debe ser subido TANTO en el ABP 8 como en el ABP 9.**
