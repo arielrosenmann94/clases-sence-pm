@@ -1,5 +1,7 @@
 # Clases SENCE — Python con Django (material de apoyo y demos)
 
+> _"REpositorio actualizado https://github.com/arielrosenmann94/curso-django"_
+
 ## Resumen ejecutivo
 
 Este repositorio reúne **archivos de práctica y material de clases** usados en múltiples sesiones del programa SENCE orientado a formación Full-Stack con foco en **fundamentos web y herramientas base** que luego se conectan con el trabajo en **Python/Django** (entorno, estructura de proyecto, navegación, assets, flujo de trabajo con Git, y componentes UI).
