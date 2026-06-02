@@ -1,6 +1,6 @@
 # Clases SENCE — Python con Django (material de apoyo y demos)
 
-> _"REpositorio actualizado https://github.com/arielrosenmann94/curso-django"_
+> _"Repositorio actualizado https://github.com/arielrosenmann94/curso-django"_
 
 ## Resumen ejecutivo
 
